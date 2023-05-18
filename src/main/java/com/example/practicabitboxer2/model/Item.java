@@ -1,6 +1,5 @@
 package com.example.practicabitboxer2.model;
 
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,7 +12,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity
 @Table(name = "items")
 @Data
-@Builder
 public class Item {
 
     @Id
@@ -27,6 +25,7 @@ public class Item {
     @Column(name = "price")
     private Float price;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "state")
     private ItemState state;
 

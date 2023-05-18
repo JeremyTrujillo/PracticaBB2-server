@@ -1,6 +1,5 @@
 package com.example.practicabitboxer2.model;
 
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,7 +11,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity
 @Table(name = "suppliers")
 @Data
-@Builder
 public class Supplier {
 
     @Id
