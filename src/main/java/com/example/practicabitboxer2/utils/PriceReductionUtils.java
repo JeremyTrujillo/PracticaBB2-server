@@ -8,15 +8,6 @@ import java.util.stream.Collectors;
 
 public class PriceReductionUtils {
 
-    public static PriceReduction dtoToEntity(PriceReductionDTO dto) {
-        PriceReduction priceReduction = new PriceReduction();
-        priceReduction.setId(dto.getId());
-        priceReduction.setReducedPrice(dto.getReducedPrice());
-        priceReduction.setStartDate(dto.getStartDate());
-        priceReduction.setEndDate(dto.getEndDate());
-        return priceReduction;
-    }
-
     public static List<PriceReductionDTO> entitiesToDtos(List<PriceReduction> entities) {
         return entities.stream().map(PriceReductionUtils::entityToDto).collect(Collectors.toList());
     }

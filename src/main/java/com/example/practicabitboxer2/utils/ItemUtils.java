@@ -17,7 +17,7 @@ public class ItemUtils {
         item.setCreationDate(dto.getCreationDate());
         item.setSuppliers(Collections.emptyList());
         item.setPriceReductions(Collections.emptyList());
-        item.setCreator(null);
+        item.setCreator(dto.getCreator() != null ? UserUtils.dtoToEntity(dto.getCreator()) : null);
         return item;
     }
 

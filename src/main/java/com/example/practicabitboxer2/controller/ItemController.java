@@ -1,9 +1,7 @@
 package com.example.practicabitboxer2.controller;
 
 import com.example.practicabitboxer2.dtos.ItemDTO;
-import com.example.practicabitboxer2.exceptions.ItemEmptyException;
-import com.example.practicabitboxer2.exceptions.ItemInvalidCodeException;
-import com.example.practicabitboxer2.exceptions.ItemInvalidDescriptionException;
+import com.example.practicabitboxer2.exceptions.*;
 import com.example.practicabitboxer2.model.ItemState;
 import com.example.practicabitboxer2.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,11 @@ public class ItemController {
 
     @GetMapping(value = "/{code}")
     public ResponseEntity<ItemDTO> findByItemCode(@PathVariable long code) {
-        return new ResponseEntity<>(service.findByItemCode(code), HttpStatus.OK);
+        ItemDTO byItemCode = service.findByItemCode(code);
+        if (byItemCode == null) {
+            throw new ItemNotFoundException();
+        }
+        return new ResponseEntity<>(byItemCode, HttpStatus.OK);
     }
 
     @GetMapping()
@@ -45,21 +47,35 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> saveItem(@RequestBody ItemDTO item) {
-        if (item == null) {
-            throw new ItemEmptyException();
-        }
-        if (item.getItemCode() == null) {
-            throw new ItemInvalidCodeException();
-        }
-        if (item.getDescription() == null) {
-            throw new ItemInvalidDescriptionException();
+    public ResponseEntity<Void> createItem(@RequestBody ItemDTO item) {
+        checkItemConstraints(item);
+        ItemDTO itemByCode = service.findByItemCode(item.getItemCode());
+        if (itemByCode != null) {
+            throw new ItemCodeAlreadyExistsException();
         }
         item.setState(ACTIVE.getName());
         item.setCreationDate(new Date());
         service.saveItem(item);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @PutMapping
+    public ResponseEntity<Void> editItem(@RequestBody ItemDTO item, @RequestParam long itemCode) {
+        checkItemConstraints(item);
+        if (!item.getItemCode().equals(itemCode)) {
+            throw new ItemInvalidCodeException();
+        }
+        ItemDTO itemByCode = service.findByItemCode(item.getItemCode());
+        if (itemByCode == null) {
+            throw new ItemNotFoundException();
+        }
+        if (!"ACTIVE".equals(itemByCode.getState())) {
+            throw new ItemInvalidStateException();
+        }
+        service.saveItem(item);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable long id) {
@@ -69,5 +85,18 @@ public class ItemController {
 
     private ResponseEntity<List<ItemDTO>> findByState(ItemState state) {
         return new ResponseEntity<>(this.service.findByState(state), HttpStatus.OK);
+    }
+
+    private void checkItemConstraints(ItemDTO item) {
+        if (item == null) {
+            throw new ItemEmptyException();
+        }
+        if (item.getItemCode() == null) {
+            throw new ItemEmptyCodeException();
+        }
+        if (item.getDescription() == null) {
+            throw new ItemEmptyDescriptionException();
+        }
+
     }
 }

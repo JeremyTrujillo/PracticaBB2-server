@@ -1,9 +1,6 @@
 package com.example.practicabitboxer2.conf;
 
-import com.example.practicabitboxer2.exceptions.ItemEmptyException;
-import com.example.practicabitboxer2.exceptions.ItemInvalidCodeException;
-import com.example.practicabitboxer2.exceptions.ItemInvalidDescriptionException;
-import com.example.practicabitboxer2.exceptions.ItemNotFoundException;
+import com.example.practicabitboxer2.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,13 +10,28 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({ItemEmptyException.class, ItemInvalidCodeException.class, ItemInvalidDescriptionException.class})
+    @ExceptionHandler({ItemEmptyException.class, ItemEmptyCodeException.class, ItemEmptyDescriptionException.class})
     public ResponseEntity<Object> handleItemBadRequestExceptions() {
-        return new ResponseEntity<>("Bad Request", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Missing attributes in item", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ItemInvalidCodeException.class)
+    public ResponseEntity<Object> handleItemInvalidCodeException() {
+        return new ResponseEntity<>("The item code cannot be edited.", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ItemInvalidStateException.class)
+    public ResponseEntity<Object> handleItemInvalidStateException() {
+        return new ResponseEntity<>("An inactive item cannot be edited.", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ItemNotFoundException.class)
     public ResponseEntity<Object> handleItemNotFoundException() {
-        return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ItemCodeAlreadyExistsException.class)
+    public ResponseEntity<Object> handleItemCodeAlreadyExistsException() {
+        return new ResponseEntity<>("An item with the passed item code already exists.", HttpStatus.CONFLICT);
     }
 }

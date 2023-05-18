@@ -4,6 +4,7 @@ import com.example.practicabitboxer2.dtos.UserDTO;
 import com.example.practicabitboxer2.model.User;
 
 public class UserUtils {
+
     public static User dtoToEntity(UserDTO dto) {
         User user = new User();
         user.setId(dto.getId());

@@ -1,7 +1,6 @@
 package com.example.practicabitboxer2.services;
 
 import com.example.practicabitboxer2.dtos.ItemDTO;
-import com.example.practicabitboxer2.exceptions.ItemNotFoundException;
 import com.example.practicabitboxer2.model.Item;
 import com.example.practicabitboxer2.model.ItemState;
 import com.example.practicabitboxer2.repositories.ItemRepository;
@@ -21,7 +20,7 @@ public class ItemService {
     public ItemDTO findByItemCode(long id) {
         Item item = repository.findByItemCode(id).orElse(null);
         if (item == null) {
-            throw new ItemNotFoundException();
+            return null;
         }
         return ItemUtils.entityToDto(item, true);
     }
