@@ -5,6 +5,10 @@ import com.example.practicabitboxer2.model.User;
 
 public class UserUtils {
 
+    private UserUtils() {
+        throw new IllegalStateException();
+    }
+
     public static User dtoToEntity(UserDTO dto) {
         User user = new User();
         user.setId(dto.getId());

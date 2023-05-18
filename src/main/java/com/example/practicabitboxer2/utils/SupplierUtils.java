@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
 
 public class SupplierUtils {
 
+    private SupplierUtils() {
+        throw new IllegalStateException();
+    }
+
     public static List<SupplierDTO> entitiesToDtos(List<Supplier> entities) {
         return entities.stream().map(SupplierUtils::entityToDto).collect(Collectors.toList());
     }

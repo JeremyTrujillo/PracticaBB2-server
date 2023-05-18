@@ -8,6 +8,10 @@ import java.util.Collections;
 
 public class ItemUtils {
 
+    private ItemUtils() {
+        throw new IllegalStateException();
+    }
+
     public static Item dtoToEntity(ItemDTO dto) {
         Item item = new Item();
         item.setItemCode(dto.getItemCode());
