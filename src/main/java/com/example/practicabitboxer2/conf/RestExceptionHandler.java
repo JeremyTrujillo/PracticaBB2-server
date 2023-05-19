@@ -34,4 +34,29 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleItemCodeAlreadyExistsException() {
         return new ResponseEntity<>("An item with the passed item code already exists.", HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler({UserEmptyException.class, UserEmptyUsernameException.class})
+    public ResponseEntity<Object> handleUserBadRequestExceptions() {
+        return new ResponseEntity<>("Missing attributes in user", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserInvalidRoleException.class)
+    public ResponseEntity<Object> handleUserRoleExceptions() {
+        return new ResponseEntity<>("User role is invalid", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserInvalidPasswordException.class)
+    public ResponseEntity<Object> handleUserPasswordExceptions() {
+        return new ResponseEntity<>("User password does not meet the requirements", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Object> handleUserNotFoundException() {
+        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserUsernameAlreadyExistsException.class)
+    public ResponseEntity<Object> handleUserUsernameAlreadyExistsException() {
+        return new ResponseEntity<>("A user with the passed username already exists.", HttpStatus.CONFLICT);
+    }
 }

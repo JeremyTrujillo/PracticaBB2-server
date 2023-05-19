@@ -12,7 +12,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 public class User {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = SEQUENCE, generator = "user_id_seq")
     private Long id;
 
