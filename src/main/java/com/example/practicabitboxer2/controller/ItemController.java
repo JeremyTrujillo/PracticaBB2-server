@@ -67,13 +67,15 @@ public class ItemController {
         if (!item.getItemCode().equals(itemCode)) {
             throw new ItemInvalidCodeException();
         }
-        if (!"ACTIVE".equals(item.getState())) {
-            throw new ItemInvalidStateException();
-        }
         ItemDTO itemByCode = service.findByItemCode(item.getItemCode());
         if (itemByCode == null) {
             throw new ItemNotFoundException();
         }
+        if (!"ACTIVE".equals(item.getState()) || !"ACTIVE".equals(itemByCode.getState())) {
+            throw new ItemInvalidStateException();
+        }
+        item.setCreationDate(itemByCode.getCreationDate());
+        item.setCreator(itemByCode.getCreator());
         service.saveItem(item);
         return new ResponseEntity<>(HttpStatus.OK);
     }

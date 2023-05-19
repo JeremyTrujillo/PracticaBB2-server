@@ -22,7 +22,7 @@ public class ItemUtils {
         item.setCreationDate(dto.getCreationDate());
         item.setSuppliers(Collections.emptyList());
         item.setPriceReductions(Collections.emptyList());
-        item.setCreator(dto.getCreator() != null ? UserUtils.dtoToEntity(dto.getCreator()) : null);
+        item.setCreator(UserUtils.dtoToEntity(dto.getCreator()));
         return item;
     }
 
@@ -38,7 +38,7 @@ public class ItemUtils {
         itemDTO.setPriceReductions(detailed
                 ? PriceReductionUtils.entitiesToDtos(entity.getPriceReductions())
                 : Collections.emptyList());
-        itemDTO.setCreator(entity.getCreator() != null ? UserUtils.entityToDto(entity.getCreator()) : null);
+        itemDTO.setCreator(UserUtils.entityToDto(entity.getCreator()));
         return itemDTO;
     }
 }

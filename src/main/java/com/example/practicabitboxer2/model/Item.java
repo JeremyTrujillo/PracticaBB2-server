@@ -45,7 +45,7 @@ public class Item {
             inverseJoinColumns = @JoinColumn(name = "item_code"))
     private List<PriceReduction> priceReductions;
 
-    @Column(name = "creationDate")
+    @Column(name = "creationdate")
     private Date creationDate;
 
     @ManyToOne(fetch = LAZY)

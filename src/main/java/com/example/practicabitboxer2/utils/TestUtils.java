@@ -1,6 +1,7 @@
 package com.example.practicabitboxer2.utils;
 
 import com.example.practicabitboxer2.utils.builders.ItemBuilder;
+import com.example.practicabitboxer2.utils.builders.UserBuilder;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -9,6 +10,8 @@ import java.util.Date;
 
 import static com.example.practicabitboxer2.model.ItemState.ACTIVE;
 import static com.example.practicabitboxer2.model.ItemState.INACTIVE;
+import static com.example.practicabitboxer2.model.Role.ADMIN;
+import static com.example.practicabitboxer2.model.Role.USER;
 
 public class TestUtils {
 
@@ -27,7 +30,7 @@ public class TestUtils {
                         .atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .withSuppliers(Collections.emptyList())
                 .withPriceReductions(Collections.emptyList())
-                .withCreator(null);
+                .withCreator(firstUser().build());
     }
 
     public static ItemBuilder secondItem() {
@@ -41,6 +44,22 @@ public class TestUtils {
                         .atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .withSuppliers(Collections.emptyList())
                 .withPriceReductions(Collections.emptyList())
-                .withCreator(null);
+                .withCreator(secondUser().build());
+    }
+
+    public static UserBuilder firstUser() {
+        return UserBuilder.userBuilder()
+                .withId(1L)
+                .withUsername("Jeremy")
+                .withPassword("pass")
+                .withRole(ADMIN.getName());
+    }
+
+    public static UserBuilder secondUser() {
+        return UserBuilder.userBuilder()
+                .withId(2L)
+                .withUsername("Daniel")
+                .withPassword("pass")
+                .withRole(USER.getName());
     }
 }

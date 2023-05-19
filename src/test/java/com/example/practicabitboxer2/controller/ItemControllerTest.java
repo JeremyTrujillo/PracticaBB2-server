@@ -112,6 +112,7 @@ class ItemControllerTest {
 
     @Test
     void editInvalidItem() {
+        when(itemService.findByItemCode(2)).thenReturn(secondItem().build());
         assertThrows(ItemEmptyException.class,
                 () -> itemController.editItem(null, 1));
         ItemDTO invalidCodeItem = firstItem().withItemCode(null).build();
