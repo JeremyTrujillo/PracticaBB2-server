@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class ItemDTO {
+    private Long id;
     private Long itemCode;
     private String description;
     private Float price;

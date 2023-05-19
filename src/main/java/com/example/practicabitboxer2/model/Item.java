@@ -15,8 +15,10 @@ import static javax.persistence.GenerationType.SEQUENCE;
 public class Item {
 
     @Id
-    @Column(name = "itemcode")
     @GeneratedValue(strategy = SEQUENCE, generator = "item_id_seq")
+    private Long id;
+
+    @Column(name = "itemcode", unique = true, nullable = false)
     private Long itemCode;
 
     @Column(name = "description", nullable = false)

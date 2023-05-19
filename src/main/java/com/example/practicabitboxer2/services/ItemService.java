@@ -5,6 +5,8 @@ import com.example.practicabitboxer2.model.Item;
 import com.example.practicabitboxer2.model.ItemState;
 import com.example.practicabitboxer2.repositories.ItemRepository;
 import com.example.practicabitboxer2.utils.ItemUtils;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +14,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ItemService {
 
-    @Autowired
-    ItemRepository repository;
+    private final @NonNull ItemRepository repository;
 
-    public ItemDTO findByItemCode(long id) {
-        Item item = repository.findByItemCode(id).orElse(null);
+    public ItemDTO findByItemCode(long itemCode) {
+        Item item = repository.findByItemCode(itemCode).orElse(null);
         if (item == null) {
             return null;
         }
@@ -39,7 +41,7 @@ public class ItemService {
         repository.save(ItemUtils.dtoToEntity(item));
     }
 
-    public void deleteById(long id) {
-        repository.deleteById(id);
+    public void deleteByItemCode(long itemCode) {
+        repository.deleteByItemCode(itemCode);
     }
 }

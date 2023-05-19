@@ -14,6 +14,7 @@ public class ItemUtils {
 
     public static Item dtoToEntity(ItemDTO dto) {
         Item item = new Item();
+        item.setId(dto.getId());
         item.setItemCode(dto.getItemCode());
         item.setDescription(dto.getDescription());
         item.setPrice(dto.getPrice());
@@ -27,6 +28,7 @@ public class ItemUtils {
 
     public static ItemDTO entityToDto(Item entity, boolean detailed) {
         ItemDTO itemDTO = new ItemDTO();
+        itemDTO.setId(entity.getId());
         itemDTO.setItemCode(entity.getItemCode());
         itemDTO.setDescription(entity.getDescription());
         itemDTO.setPrice(entity.getPrice());

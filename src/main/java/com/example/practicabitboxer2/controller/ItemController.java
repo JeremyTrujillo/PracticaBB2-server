@@ -4,6 +4,8 @@ import com.example.practicabitboxer2.dtos.ItemDTO;
 import com.example.practicabitboxer2.exceptions.*;
 import com.example.practicabitboxer2.model.ItemState;
 import com.example.practicabitboxer2.services.ItemService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +19,10 @@ import static com.example.practicabitboxer2.model.ItemState.INACTIVE;
 
 @RestController
 @RequestMapping("/items")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ItemController {
 
-    @Autowired
-    ItemService service;
+    private final @NonNull ItemService service;
 
     @GetMapping(value = "/{code}")
     public ResponseEntity<ItemDTO> findByItemCode(@PathVariable long code) {
@@ -65,21 +67,24 @@ public class ItemController {
         if (!item.getItemCode().equals(itemCode)) {
             throw new ItemInvalidCodeException();
         }
+        if (!"ACTIVE".equals(item.getState())) {
+            throw new ItemInvalidStateException();
+        }
         ItemDTO itemByCode = service.findByItemCode(item.getItemCode());
         if (itemByCode == null) {
             throw new ItemNotFoundException();
-        }
-        if (!"ACTIVE".equals(itemByCode.getState())) {
-            throw new ItemInvalidStateException();
         }
         service.saveItem(item);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable long id) {
-        service.deleteById(id);
+    @DeleteMapping
+    public ResponseEntity<Void> deleteByItemCode(@RequestParam long itemCode) {
+        ItemDTO item = service.findByItemCode(itemCode);
+        if (item == null) {
+            throw new ItemNotFoundException();
+        }
+        service.deleteByItemCode(itemCode);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
