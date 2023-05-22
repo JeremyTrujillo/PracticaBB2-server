@@ -4,8 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 
-import java.util.List;
-
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
@@ -23,8 +21,5 @@ public class Supplier {
 
     @Column(name = "country")
     private String country;
-
-    @ManyToMany(mappedBy = "suppliers")
-    private List<Item> items;
 
 }

@@ -56,7 +56,7 @@ class ItemServiceTest {
     void findByState() {
         List<ItemDTO> testList = newArrayList(firstItem().build());
         List<Item> entityList = testList.stream().map(ItemUtils::dtoToEntity).collect(Collectors.toList());
-        when(itemRepository.findByState(ACTIVE.getName())).thenReturn(entityList);
+        when(itemRepository.findByState(ACTIVE)).thenReturn(entityList);
         List<ItemDTO> all = itemService.findByState(ACTIVE);
         assertArrayEquals(testList.toArray(), all.toArray());
     }

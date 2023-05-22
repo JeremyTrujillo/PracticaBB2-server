@@ -33,7 +33,7 @@ public class ItemService {
     }
 
     public List<ItemDTO> findByState(ItemState state) {
-        List<Item> items = repository.findByState(state.getName());
+        List<Item> items = repository.findByState(state);
         return items.stream().map(item -> ItemUtils.entityToDto(item, false)).collect(Collectors.toList());
     }
 

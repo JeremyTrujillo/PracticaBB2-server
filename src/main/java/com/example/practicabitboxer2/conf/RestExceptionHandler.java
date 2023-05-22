@@ -25,6 +25,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>("An inactive item cannot be edited.", HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ItemSupplierDuplicatedException.class)
+    public ResponseEntity<Object> handleItemSupplierDuplicatedException() {
+        return new ResponseEntity<>("The new supplier is already associated with the item.", HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ItemNotFoundException.class)
     public ResponseEntity<Object> handleItemNotFoundException() {
         return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);

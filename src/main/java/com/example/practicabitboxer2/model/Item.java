@@ -31,18 +31,18 @@ public class Item {
     @Column(name = "state")
     private ItemState state;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "items_suppliers",
-            joinColumns = @JoinColumn(name = "supplier_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_code"))
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "supplier_id"))
     private List<Supplier> suppliers;
 
     @ManyToMany
     @JoinTable(
             name = "items_pricereductions",
-            joinColumns = @JoinColumn(name = "pricereduction_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_code"))
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "pricereduction_id"))
     private List<PriceReduction> priceReductions;
 
     @Column(name = "creationdate")

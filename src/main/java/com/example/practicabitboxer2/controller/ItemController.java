@@ -1,6 +1,7 @@
 package com.example.practicabitboxer2.controller;
 
 import com.example.practicabitboxer2.dtos.ItemDTO;
+import com.example.practicabitboxer2.dtos.SupplierDTO;
 import com.example.practicabitboxer2.exceptions.*;
 import com.example.practicabitboxer2.model.ItemState;
 import com.example.practicabitboxer2.services.ItemService;
@@ -12,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.example.practicabitboxer2.model.ItemState.ACTIVE;
 import static com.example.practicabitboxer2.model.ItemState.INACTIVE;
@@ -64,6 +67,7 @@ public class ItemController {
     @PutMapping
     public ResponseEntity<Void> editItem(@RequestBody ItemDTO item, @RequestParam long itemCode) {
         checkItemConstraints(item);
+        checkSupplierConstraints(item.getSuppliers());
         if (!item.getItemCode().equals(itemCode)) {
             throw new ItemInvalidCodeException();
         }
@@ -104,6 +108,12 @@ public class ItemController {
         if (item.getDescription() == null) {
             throw new ItemEmptyDescriptionException();
         }
+    }
 
+    private void checkSupplierConstraints(List<SupplierDTO> newItemSuppliers) {
+        Set<SupplierDTO> suppliersSet = new HashSet<>(newItemSuppliers);
+        if (suppliersSet.size() != newItemSuppliers.size()) {
+            throw new ItemSupplierDuplicatedException();
+        }
     }
 }

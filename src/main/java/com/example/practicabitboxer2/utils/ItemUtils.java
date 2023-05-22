@@ -20,7 +20,7 @@ public class ItemUtils {
         item.setPrice(dto.getPrice());
         item.setState(ItemState.fromText(dto.getState()));
         item.setCreationDate(dto.getCreationDate());
-        item.setSuppliers(Collections.emptyList());
+        item.setSuppliers(SupplierUtils.dtosToEntities(dto.getSuppliers()));
         item.setPriceReductions(Collections.emptyList());
         item.setCreator(UserUtils.dtoToEntity(dto.getCreator()));
         return item;
