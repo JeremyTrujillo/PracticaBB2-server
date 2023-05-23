@@ -30,6 +30,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>("The new supplier is already associated with the item.", HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ItemAlreadyInactiveException.class)
+    public ResponseEntity<Object> handleItemAlreadyInactiveException() {
+        return new ResponseEntity<>("The item is already inactive.", HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ItemNotFoundException.class)
     public ResponseEntity<Object> handleItemNotFoundException() {
         return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);

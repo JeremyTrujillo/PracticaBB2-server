@@ -5,11 +5,12 @@ import com.example.practicabitboxer2.dtos.SupplierDTO;
 import com.example.practicabitboxer2.exceptions.*;
 import com.example.practicabitboxer2.model.ItemState;
 import com.example.practicabitboxer2.services.ItemService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -84,6 +85,7 @@ public class ItemController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     public ResponseEntity<Void> deleteByItemCode(@RequestParam long itemCode) {
         ItemDTO item = service.findByItemCode(itemCode);
@@ -96,6 +98,19 @@ public class ItemController {
 
     private ResponseEntity<List<ItemDTO>> findByState(ItemState state) {
         return new ResponseEntity<>(this.service.findByState(state), HttpStatus.OK);
+    }
+
+    @PutMapping("/deactivate")
+    public ResponseEntity<Void> editItem(@RequestParam long itemCode) {
+        ItemDTO item = service.findByItemCode(itemCode);
+        if (item == null) {
+            throw new ItemNotFoundException();
+        }
+        if (!ACTIVE.getName().equals(item.getState())) {
+            throw new ItemAlreadyInactiveException();
+        }
+        service.deactivateItem(item);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private void checkItemConstraints(ItemDTO item) {

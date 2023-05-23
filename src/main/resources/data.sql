@@ -1,4 +1,12 @@
 INSERT INTO USERS (id,username,password,role) VALUES (1,'Jeremy','pass','ADMIN');
 INSERT INTO USERS (id,username,password,role) VALUES (2,'Daniel','pass','USER');
-INSERT INTO items (id,itemcode,description,price,state,creationdate,creator) VALUES (1,1,'test',5.0,'ACTIVE','2023-05-19',1);
-INSERT INTO items (id,itemcode,description,price,state,creationdate,creator) VALUES (2,2,'test',10.0,'INACTIVE','2023-05-19',2);
+INSERT INTO items (id,itemcode,description,price,state,creationdate,creator) VALUES (1,1,'test1',5.0,'ACTIVE','2023-05-19',1);
+INSERT INTO items (id,itemcode,description,price,state,creationdate,creator) VALUES (2,2,'test2',10.0,'INACTIVE','2023-05-19',2);
+INSERT INTO items (id,itemcode,description,price,state,creationdate,creator) VALUES (3,3,'test3',7.0,'ACTIVE','2023-05-19',1);
+INSERT INTO items (id,itemcode,description,price,state,creationdate,creator) VALUES (4,4,'test4',2.0,'ACTIVE','2023-05-19',1);
+INSERT INTO suppliers (id, name, country) VALUES (1, 'testSupplier', 'Spain');
+INSERT INTO suppliers (id, name, country) VALUES (2, 'otroSupplier', 'Spain');
+INSERT INTO items_suppliers (item_id, supplier_id) VALUES (1,1);
+INSERT INTO items_suppliers (item_id, supplier_id) VALUES (1,2);
+INSERT INTO items_suppliers (item_id, supplier_id) VALUES (3,1);
+INSERT INTO items_suppliers (item_id, supplier_id) VALUES (4,2);

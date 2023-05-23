@@ -1,14 +1,13 @@
 package com.example.practicabitboxer2.services;
 
-import com.example.practicabitboxer2.dtos.ItemDTO;
 import com.example.practicabitboxer2.dtos.UserDTO;
 import com.example.practicabitboxer2.model.User;
 import com.example.practicabitboxer2.repositories.UserRepository;
-import com.example.practicabitboxer2.utils.ItemUtils;
 import com.example.practicabitboxer2.utils.UserUtils;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +18,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final @NonNull UserRepository repository;
-
-    public void login() {
-
-    }
+    private final @NonNull PasswordEncoder passwordEncoder;
 
     public UserDTO findByUsername(String username) {
         User user = repository.findByUsername(username).orElse(null);
@@ -38,6 +34,7 @@ public class UserService {
     }
 
     public void saveUser(UserDTO user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         repository.save(UserUtils.dtoToEntity(user));
     }
 

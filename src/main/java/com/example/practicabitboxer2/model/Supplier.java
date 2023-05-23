@@ -4,6 +4,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+import java.util.Objects;
+
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
@@ -22,4 +24,16 @@ public class Supplier {
     @Column(name = "country")
     private String country;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Supplier supplier = (Supplier) o;
+        return Objects.equals(name, supplier.name) && Objects.equals(country, supplier.country);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, country);
+    }
 }
