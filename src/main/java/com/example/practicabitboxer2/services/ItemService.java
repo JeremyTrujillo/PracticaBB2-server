@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.practicabitboxer2.model.ItemState.INACTIVE;
+import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -49,7 +49,7 @@ public class ItemService {
 
     public void deactivateItem(ItemDTO item) {
         Item entity = ItemUtils.dtoToEntity(item);
-        entity.setState(INACTIVE);
+        entity.setState(DISCONTINUED);
         repository.save(entity);
     }
 }

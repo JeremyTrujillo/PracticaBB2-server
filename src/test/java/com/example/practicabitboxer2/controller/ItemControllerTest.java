@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.example.practicabitboxer2.model.ItemState.ACTIVE;
-import static com.example.practicabitboxer2.model.ItemState.INACTIVE;
+import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
 import static com.example.practicabitboxer2.utils.TestUtils.firstItem;
 import static com.example.practicabitboxer2.utils.TestUtils.secondItem;
 import static org.assertj.core.util.Lists.newArrayList;
@@ -55,10 +55,10 @@ class ItemControllerTest {
     }
 
     @Test
-    void findInactive() {
+    void findDiscontinued() {
         List<ItemDTO> testList = newArrayList(secondItem().build());
-        when(itemService.findByState(INACTIVE)).thenReturn(testList);
-        List<ItemDTO> all = itemController.findInactive().getBody();
+        when(itemService.findByState(DISCONTINUED)).thenReturn(testList);
+        List<ItemDTO> all = itemController.findDiscontinued().getBody();
         assertNotNull(all);
         assertArrayEquals(testList.toArray(), all.toArray());
     }
@@ -124,9 +124,9 @@ class ItemControllerTest {
         ItemDTO firstItem = firstItem().build();
         assertThrows(ItemInvalidCodeException.class,
                 () -> itemController.editItem(firstItem, 2));
-        ItemDTO inactiveItem = secondItem().build();
+        ItemDTO discontinuedItem = secondItem().build();
         assertThrows(ItemInvalidStateException.class,
-                () -> itemController.editItem(inactiveItem, 2));
+                () -> itemController.editItem(discontinuedItem, 2));
     }
 
     @Test

@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import static com.example.practicabitboxer2.model.ItemState.ACTIVE;
-import static com.example.practicabitboxer2.model.ItemState.INACTIVE;
+import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
 import static com.example.practicabitboxer2.model.Role.ADMIN;
 import static com.example.practicabitboxer2.model.Role.USER;
 
@@ -39,7 +39,7 @@ public class TestUtils {
                 .withItemCode(2L)
                 .withDescription("Second item")
                 .withPrice(10F)
-                .withState(INACTIVE.getName())
+                .withState(DISCONTINUED.getName())
                 .withCreationDate(Date.from(LocalDate.of(2023, 2, 10)
                         .atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .withSuppliers(Collections.emptyList())

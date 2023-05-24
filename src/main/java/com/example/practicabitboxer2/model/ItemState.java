@@ -2,7 +2,7 @@ package com.example.practicabitboxer2.model;
 
 public enum ItemState {
     ACTIVE("ACTIVE"),
-    INACTIVE("INACTIVE");
+    DISCONTINUED("DISCONTINUED");
 
     ItemState(String name) {
         this.name = name;
@@ -16,13 +16,13 @@ public enum ItemState {
 
     public static ItemState fromText(String text) {
         if (text == null) {
-            return ACTIVE;
+            return null;
         }
         for (ItemState state : values()) {
             if (state.getName().equals(text.toUpperCase())) {
                 return state;
             }
         }
-        return ACTIVE;
+        return null;
     }
 }

@@ -22,7 +22,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ItemInvalidStateException.class)
     public ResponseEntity<Object> handleItemInvalidStateException() {
-        return new ResponseEntity<>("An inactive item cannot be edited.", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("A discontinued item cannot be edited.", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ItemSupplierDuplicatedException.class)
@@ -30,9 +30,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>("The new supplier is already associated with the item.", HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ItemAlreadyInactiveException.class)
-    public ResponseEntity<Object> handleItemAlreadyInactiveException() {
-        return new ResponseEntity<>("The item is already inactive.", HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ItemAlreadyDiscontinuedException.class)
+    public ResponseEntity<Object> handleItemAlreadyDiscontinuedException() {
+        return new ResponseEntity<>("The item is already discontinued.", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ItemNotFoundException.class)

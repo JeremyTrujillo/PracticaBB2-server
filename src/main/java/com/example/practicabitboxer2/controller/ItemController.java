@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.example.practicabitboxer2.model.ItemState.ACTIVE;
-import static com.example.practicabitboxer2.model.ItemState.INACTIVE;
+import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
 
 @RestController
 @RequestMapping("/items")
@@ -47,9 +47,9 @@ public class ItemController {
         return this.findByState(ACTIVE);
     }
 
-    @GetMapping(value = "/inactive")
-    public ResponseEntity<List<ItemDTO>> findInactive() {
-        return this.findByState(INACTIVE);
+    @GetMapping(value = "/discontinued")
+    public ResponseEntity<List<ItemDTO>> findDiscontinued() {
+        return this.findByState(DISCONTINUED);
     }
 
     @PostMapping
@@ -85,7 +85,7 @@ public class ItemController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping
     public ResponseEntity<Void> deleteByItemCode(@RequestParam long itemCode) {
         ItemDTO item = service.findByItemCode(itemCode);
@@ -107,7 +107,7 @@ public class ItemController {
             throw new ItemNotFoundException();
         }
         if (!ACTIVE.getName().equals(item.getState())) {
-            throw new ItemAlreadyInactiveException();
+            throw new ItemAlreadyDiscontinuedException();
         }
         service.deactivateItem(item);
         return new ResponseEntity<>(HttpStatus.OK);
