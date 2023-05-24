@@ -5,6 +5,8 @@ import com.example.practicabitboxer2.model.Item;
 import com.example.practicabitboxer2.model.ItemState;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemUtils {
 
@@ -21,7 +23,7 @@ public class ItemUtils {
         item.setState(ItemState.fromText(dto.getState()));
         item.setCreationDate(dto.getCreationDate());
         item.setSuppliers(SupplierUtils.dtosToEntities(dto.getSuppliers()));
-        item.setPriceReductions(Collections.emptyList());
+        item.setPriceReductions(PriceReductionUtils.dtosToEntities(dto.getPriceReductions()));
         item.setCreator(UserUtils.dtoToEntity(dto.getCreator()));
         return item;
     }
@@ -40,5 +42,10 @@ public class ItemUtils {
                 : Collections.emptyList());
         itemDTO.setCreator(UserUtils.entityToDto(entity.getCreator()));
         return itemDTO;
+    }
+
+
+    public static List<Item> dtoToEntities(List<ItemDTO> testList) {
+        return testList.stream().map(ItemUtils::dtoToEntity).collect(Collectors.toList());
     }
 }

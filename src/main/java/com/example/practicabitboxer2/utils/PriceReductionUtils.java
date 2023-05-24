@@ -12,8 +12,13 @@ public class PriceReductionUtils {
         throw new IllegalStateException();
     }
 
-    public static List<PriceReductionDTO> entitiesToDtos(List<PriceReduction> entities) {
-        return entities.stream().map(PriceReductionUtils::entityToDto).collect(Collectors.toList());
+    private static PriceReduction dtoToEntity(PriceReductionDTO priceReductionDTO) {
+        PriceReduction priceReduction = new PriceReduction();
+        priceReduction.setId(priceReductionDTO.getId());
+        priceReduction.setReducedPrice(priceReductionDTO.getReducedPrice());
+        priceReduction.setStartDate(priceReductionDTO.getStartDate());
+        priceReduction.setEndDate(priceReductionDTO.getEndDate());
+        return priceReduction;
     }
 
     public static PriceReductionDTO entityToDto(PriceReduction entity) {
@@ -23,5 +28,13 @@ public class PriceReductionUtils {
         dto.setStartDate(entity.getStartDate());
         dto.setEndDate(entity.getEndDate());
         return dto;
+    }
+
+    public static List<PriceReduction> dtosToEntities(List<PriceReductionDTO> priceReductions) {
+        return priceReductions.stream().map(PriceReductionUtils::dtoToEntity).collect(Collectors.toList());
+    }
+
+    public static List<PriceReductionDTO> entitiesToDtos(List<PriceReduction> entities) {
+        return entities.stream().map(PriceReductionUtils::entityToDto).collect(Collectors.toList());
     }
 }

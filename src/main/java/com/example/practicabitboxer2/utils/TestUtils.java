@@ -15,8 +15,34 @@ import static com.example.practicabitboxer2.model.Role.USER;
 
 public class TestUtils {
 
+    private static final String PASSWORD = "password";
+
     private TestUtils() {
         throw new IllegalStateException();
+    }
+
+    public static UserBuilder firstUser() {
+        return UserBuilder.userBuilder()
+                .withId(1L)
+                .withUsername("Jeremy")
+                .withPassword(PASSWORD)
+                .withRole(ADMIN.getName());
+    }
+
+    public static UserBuilder secondUser() {
+        return UserBuilder.userBuilder()
+                .withId(2L)
+                .withUsername("Daniel")
+                .withPassword(PASSWORD)
+                .withRole(USER.getName());
+    }
+
+    public static UserBuilder newUser() {
+        return UserBuilder.userBuilder()
+                .withId(3L)
+                .withUsername("NewUser")
+                .withPassword(PASSWORD)
+                .withRole(USER.getName());
     }
 
     public static ItemBuilder firstItem() {
@@ -26,7 +52,7 @@ public class TestUtils {
                 .withDescription("First item")
                 .withPrice(5F)
                 .withState(ACTIVE.getName())
-                .withCreationDate(Date.from(LocalDate.of(2023, 5, 17)
+                .withCreationDate(Date.from(LocalDate.of(2023, 5, 19)
                         .atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .withSuppliers(Collections.emptyList())
                 .withPriceReductions(Collections.emptyList())
@@ -47,19 +73,19 @@ public class TestUtils {
                 .withCreator(secondUser().build());
     }
 
-    public static UserBuilder firstUser() {
-        return UserBuilder.userBuilder()
-                .withId(1L)
-                .withUsername("Jeremy")
-                .withPassword("pass")
-                .withRole(ADMIN.getName());
+    public static ItemBuilder newItem() {
+        return ItemBuilder.itemBuilder()
+                .withId(5L)
+                .withItemCode(5L)
+                .withDescription("New item")
+                .withPrice(1F)
+                .withState(ACTIVE.getName())
+                .withCreationDate(Date.from(LocalDate.of(2023, 5, 24)
+                        .atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .withSuppliers(Collections.emptyList())
+                .withPriceReductions(Collections.emptyList())
+                .withCreator(firstUser().build());
     }
 
-    public static UserBuilder secondUser() {
-        return UserBuilder.userBuilder()
-                .withId(2L)
-                .withUsername("Daniel")
-                .withPassword("pass")
-                .withRole(USER.getName());
-    }
+
 }

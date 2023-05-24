@@ -4,6 +4,9 @@ import com.example.practicabitboxer2.dtos.UserDTO;
 import com.example.practicabitboxer2.model.Role;
 import com.example.practicabitboxer2.model.User;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class UserUtils {
 
     private UserUtils() {
@@ -32,5 +35,9 @@ public class UserUtils {
         dto.setPassword(entity.getPassword());
         dto.setRole(entity.getRole().getName());
         return dto;
+    }
+
+    public static List<User> dtoToEntities(List<UserDTO> testList) {
+        return testList.stream().map(UserUtils::dtoToEntity).collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package com.example.practicabitboxer2.controller;
 
 import com.example.practicabitboxer2.dtos.ItemDTO;
+import com.example.practicabitboxer2.dtos.PriceReductionDTO;
 import com.example.practicabitboxer2.dtos.SupplierDTO;
 import com.example.practicabitboxer2.exceptions.*;
 import com.example.practicabitboxer2.model.ItemState;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -69,14 +71,18 @@ public class ItemController {
     public ResponseEntity<Void> editItem(@RequestBody ItemDTO item, @RequestParam long itemCode) {
         checkItemConstraints(item);
         checkSupplierConstraints(item.getSuppliers());
+        checkPriceReductionsConstraints(item.getPriceReductions());
         if (!item.getItemCode().equals(itemCode)) {
             throw new ItemInvalidCodeException();
+        }
+        if (!"ACTIVE".equals(item.getState())) {
+            throw new ItemInvalidStateException();
         }
         ItemDTO itemByCode = service.findByItemCode(item.getItemCode());
         if (itemByCode == null) {
             throw new ItemNotFoundException();
         }
-        if (!"ACTIVE".equals(item.getState()) || !"ACTIVE".equals(itemByCode.getState())) {
+        if (!"ACTIVE".equals(itemByCode.getState())) {
             throw new ItemInvalidStateException();
         }
         item.setCreationDate(itemByCode.getCreationDate());
@@ -101,7 +107,7 @@ public class ItemController {
     }
 
     @PutMapping("/deactivate")
-    public ResponseEntity<Void> editItem(@RequestParam long itemCode) {
+    public ResponseEntity<Void> deactivateItem(@RequestParam long itemCode) {
         ItemDTO item = service.findByItemCode(itemCode);
         if (item == null) {
             throw new ItemNotFoundException();
@@ -120,7 +126,7 @@ public class ItemController {
         if (item.getItemCode() == null) {
             throw new ItemEmptyCodeException();
         }
-        if (item.getDescription() == null) {
+        if (!StringUtils.hasText(item.getDescription())) {
             throw new ItemEmptyDescriptionException();
         }
     }
@@ -129,6 +135,12 @@ public class ItemController {
         Set<SupplierDTO> suppliersSet = new HashSet<>(newItemSuppliers);
         if (suppliersSet.size() != newItemSuppliers.size()) {
             throw new ItemSupplierDuplicatedException();
+        }
+    }
+
+    private void checkPriceReductionsConstraints(List<PriceReductionDTO> priceReductions) {
+        if (priceReductions == null) {
+            throw new OverlappingPriceReductionsException();
         }
     }
 }

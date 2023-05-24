@@ -12,12 +12,12 @@ public class SupplierUtils {
         throw new IllegalStateException();
     }
 
-    public static List<SupplierDTO> entitiesToDtos(List<Supplier> entities) {
-        return entities.stream().map(SupplierUtils::entityToDto).collect(Collectors.toList());
-    }
-
-    public static List<Supplier> dtosToEntities(List<SupplierDTO> dtos) {
-        return dtos.stream().map(SupplierUtils::dtoToEntity).collect(Collectors.toList());
+    public static Supplier dtoToEntity(SupplierDTO dto) {
+        Supplier supplier = new Supplier();
+        supplier.setId(dto.getId());
+        supplier.setName(dto.getName());
+        supplier.setCountry(dto.getCountry());
+        return supplier;
     }
 
     public static SupplierDTO entityToDto(Supplier entity) {
@@ -28,11 +28,11 @@ public class SupplierUtils {
         return dto;
     }
 
-    public static Supplier dtoToEntity(SupplierDTO dto) {
-        Supplier supplier = new Supplier();
-        supplier.setId(dto.getId());
-        supplier.setName(dto.getName());
-        supplier.setCountry(dto.getCountry());
-        return supplier;
+    public static List<Supplier> dtosToEntities(List<SupplierDTO> dtos) {
+        return dtos.stream().map(SupplierUtils::dtoToEntity).collect(Collectors.toList());
+    }
+
+    public static List<SupplierDTO> entitiesToDtos(List<Supplier> entities) {
+        return entities.stream().map(SupplierUtils::entityToDto).collect(Collectors.toList());
     }
 }

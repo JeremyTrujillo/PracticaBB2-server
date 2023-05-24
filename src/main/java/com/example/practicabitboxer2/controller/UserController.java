@@ -34,6 +34,7 @@ public class UserController {
     @PreAuthorize("permitAll")
     @PostMapping(value = "/login")
     public ResponseEntity<JwtDTO> login(@RequestBody UserDTO user) {
+        checkUserConstraints(user);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -50,6 +51,9 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Void> createUser(@RequestBody UserDTO user) {
         checkUserConstraints(user);
+        if (user.getRole() == null || (!user.getRole().equals("USER") && !user.getRole().equals("ADMIN"))) {
+            throw new UserInvalidRoleException();
+        }
         UserDTO userByUsername = service.findByUsername(user.getUsername());
         if (userByUsername != null) {
             throw new UserUsernameAlreadyExistsException();
@@ -72,13 +76,10 @@ public class UserController {
         if (user == null) {
             throw new UserEmptyException();
         }
-        if (user.getUsername() == null || user.getUsername().length() == 0) {
+        if (!StringUtils.hasText(user.getUsername())) {
             throw new UserEmptyUsernameException();
         }
         checkPasswordConstraints(user.getPassword());
-        if (user.getRole() == null || (!user.getRole().equals("USER") && !user.getRole().equals("ADMIN"))) {
-            throw new UserInvalidRoleException();
-        }
     }
 
     private void checkPasswordConstraints(String password) {

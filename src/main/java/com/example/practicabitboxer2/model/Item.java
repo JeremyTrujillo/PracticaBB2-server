@@ -12,6 +12,13 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity
 @Table(name = "items")
 @Data
+@NamedEntityGraph(name = "ItemWithSuppliers", attributeNodes = {
+        @NamedAttributeNode("suppliers")
+})
+@NamedEntityGraph(name = "ItemWithPriceReductions", attributeNodes = {
+        @NamedAttributeNode("priceReductions")
+})
+
 public class Item {
 
     @Id
@@ -38,7 +45,7 @@ public class Item {
             inverseJoinColumns = @JoinColumn(name = "supplier_id"))
     private List<Supplier> suppliers;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "items_pricereductions",
             joinColumns = @JoinColumn(name = "item_id"),
@@ -51,8 +58,4 @@ public class Item {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "creator")
     private User creator;
-
-    public Float getCurrentPrice() {
-        return null;
-    }
 }

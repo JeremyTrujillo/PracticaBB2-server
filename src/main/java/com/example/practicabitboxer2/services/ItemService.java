@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,8 +22,10 @@ public class ItemService {
 
     private final @NonNull ItemRepository repository;
 
+    @Transactional
     public ItemDTO findByItemCode(long itemCode) {
-        Item item = repository.findByItemCode(itemCode).orElse(null);
+        repository.findOneWithSuppliersByItemCode(itemCode);
+        Item item = repository.findOneWithPriceReductionsByItemCode(itemCode).orElse(null);
         if (item == null) {
             return null;
         }

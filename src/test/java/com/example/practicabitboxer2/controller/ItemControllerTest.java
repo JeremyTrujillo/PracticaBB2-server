@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -18,10 +20,13 @@ import static com.example.practicabitboxer2.model.ItemState.ACTIVE;
 import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
 import static com.example.practicabitboxer2.utils.TestUtils.firstItem;
 import static com.example.practicabitboxer2.utils.TestUtils.secondItem;
+import static com.example.practicabitboxer2.utils.TestUtils.newItem;
 import static org.assertj.core.util.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @ExtendWith(MockitoExtension.class)
 class ItemControllerTest {
@@ -40,27 +45,36 @@ class ItemControllerTest {
     void findAll() {
         List<ItemDTO> testList = newArrayList(firstItem().build(), secondItem().build());
         when(itemService.findAll()).thenReturn(testList);
-        List<ItemDTO> all = itemController.findAll().getBody();
+        ResponseEntity<List<ItemDTO>> findAll = itemController.findAll();
+        List<ItemDTO> all = findAll.getBody();
         assertNotNull(all);
         assertArrayEquals(testList.toArray(), all.toArray());
+        HttpStatus statusCode = findAll.getStatusCode();
+        assertEquals(OK, statusCode);
     }
 
     @Test
     void findActive() {
         List<ItemDTO> testList = newArrayList(firstItem().build());
         when(itemService.findByState(ACTIVE)).thenReturn(testList);
-        List<ItemDTO> all = itemController.findActive().getBody();
+        ResponseEntity<List<ItemDTO>> findActive = itemController.findActive();
+        List<ItemDTO> all = findActive.getBody();
         assertNotNull(all);
         assertArrayEquals(testList.toArray(), all.toArray());
+        HttpStatus statusCode = findActive.getStatusCode();
+        assertEquals(OK, statusCode);
     }
 
     @Test
     void findDiscontinued() {
         List<ItemDTO> testList = newArrayList(secondItem().build());
         when(itemService.findByState(DISCONTINUED)).thenReturn(testList);
-        List<ItemDTO> all = itemController.findDiscontinued().getBody();
+        ResponseEntity<List<ItemDTO>> findDiscontinued = itemController.findDiscontinued();
+        List<ItemDTO> all = findDiscontinued.getBody();
         assertNotNull(all);
         assertArrayEquals(testList.toArray(), all.toArray());
+        HttpStatus statusCode = findDiscontinued.getStatusCode();
+        assertEquals(OK, statusCode);
     }
 
     @Test
@@ -96,45 +110,51 @@ class ItemControllerTest {
     @Test
     void createValidItem() {
         List<ItemDTO> testList = newArrayList();
-        ItemDTO firstItem = firstItem().build();
+        ItemDTO newItem = newItem().withState(null).build();
         when(itemService.findAll()).thenReturn(testList);
-        doAnswer(invocationOnMock -> testList.add(firstItem)).when(itemService).saveItem(firstItem);
-        itemController.createItem(firstItem);
+        doAnswer(invocationOnMock -> testList.add(newItem))
+                .when(itemService).saveItem(newItem);
+        HttpStatus statusCode = itemController.createItem(newItem).getStatusCode();
+        assertEquals(CREATED, statusCode);
         List<ItemDTO> all = itemController.findAll().getBody();
         assertNotNull(all);
         assertEquals(1, all.size());
         assertEquals(ACTIVE.getName(), all.get(0).getState());
-        LocalDate currentDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate currentDate = new Date().toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate();
         Date itemCreationDate = all.get(0).getCreationDate();
-        LocalDate creationDate = itemCreationDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate creationDate = itemCreationDate.toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate();
         assertEquals(currentDate, creationDate);
     }
 
     @Test
     void editInvalidItem() {
-        when(itemService.findByItemCode(2)).thenReturn(secondItem().build());
         assertThrows(ItemEmptyException.class,
                 () -> itemController.editItem(null, 1));
-        ItemDTO invalidCodeItem = firstItem().withItemCode(null).build();
+        ItemDTO nullCodeItem = firstItem().withItemCode(null).build();
         assertThrows(ItemEmptyCodeException.class,
-                () -> itemController.editItem(invalidCodeItem, 1));
-        ItemDTO invalidDescriptionItem = firstItem().withDescription(null).build();
+                () -> itemController.editItem(nullCodeItem, 1));
+        ItemDTO nullDescriptionItem = firstItem().withDescription(null).build();
+        assertThrows(ItemEmptyDescriptionException.class,
+                () -> itemController.editItem(nullDescriptionItem, 1));
+        ItemDTO invalidDescriptionItem = firstItem().withDescription("").build();
         assertThrows(ItemEmptyDescriptionException.class,
                 () -> itemController.editItem(invalidDescriptionItem, 1));
         ItemDTO firstItem = firstItem().build();
         assertThrows(ItemInvalidCodeException.class,
                 () -> itemController.editItem(firstItem, 2));
-        ItemDTO discontinuedItem = secondItem().build();
+        ItemDTO discontinuedItem = firstItem().withState(DISCONTINUED.getName()).build();
         assertThrows(ItemInvalidStateException.class,
-                () -> itemController.editItem(discontinuedItem, 2));
+                () -> itemController.editItem(discontinuedItem, 1));
     }
 
     @Test
     void editNonexistentItem() {
         when(itemService.findByItemCode(1)).thenReturn(null);
-        ItemDTO firstItem = firstItem().build();
+        ItemDTO item = firstItem().build();
         assertThrows(ItemNotFoundException.class,
-                () -> itemController.editItem(firstItem, 1));
+                () -> itemController.editItem(item, 1));
     }
 
     @Test
@@ -143,13 +163,15 @@ class ItemControllerTest {
         List<ItemDTO> testList = newArrayList(item);
         when(itemService.findAll()).thenReturn(testList);
         when(itemService.findByItemCode(1)).thenReturn(item);
-        doAnswer(invocationOnMock -> testList.set(0, item)).when(itemService).saveItem(item);
+        doAnswer(invocationOnMock -> testList.set(0, item))
+                .when(itemService).saveItem(item);
         List<ItemDTO> all = itemController.findAll().getBody();
         assertNotNull(all);
         assertEquals(1, all.size());
         assertEquals(firstItem().build().getDescription(), all.get(0).getDescription());
         item.setDescription("editValidItem item");
-        itemController.editItem(item, 1);
+        HttpStatus statusCode = itemController.editItem(item, 1).getStatusCode();
+        assertEquals(OK, statusCode);
         all = itemController.findAll().getBody();
         assertNotNull(all);
         assertEquals(1, all.size());
@@ -165,17 +187,11 @@ class ItemControllerTest {
 
     @Test
     void deleteValidItem() {
-        ItemDTO item = firstItem().build();
-        List<ItemDTO> testList = newArrayList(item);
-        when(itemService.findAll()).thenReturn(testList);
-        when(itemService.findByItemCode(1)).thenReturn(item);
-        doAnswer(invocationOnMock -> testList.remove(0)).when(itemService).deleteByItemCode(1);
-        List<ItemDTO> all = itemController.findAll().getBody();
-        assertNotNull(all);
-        assertEquals(1, all.size());
-        itemController.deleteByItemCode(1);
-        all = itemController.findAll().getBody();
-        assertNotNull(all);
-        assertEquals(0, all.size());
+        ItemDTO firstItem = firstItem().build();
+        Long firstItemCode = firstItem.getItemCode();
+        when(itemService.findByItemCode(firstItemCode)).thenReturn(firstItem);
+        HttpStatus statusCode = itemController.deleteByItemCode(firstItemCode)
+                .getStatusCode();
+        assertEquals(OK, statusCode);
     }
 }

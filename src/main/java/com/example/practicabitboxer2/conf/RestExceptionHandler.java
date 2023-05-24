@@ -30,6 +30,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>("The new supplier is already associated with the item.", HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(OverlappingPriceReductionsException.class)
+    public ResponseEntity<Object> handleOverlappingPriceReductionsException() {
+        return new ResponseEntity<>("An overlapping between price reductions was found.", HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ItemAlreadyDiscontinuedException.class)
     public ResponseEntity<Object> handleItemAlreadyDiscontinuedException() {
         return new ResponseEntity<>("The item is already discontinued.", HttpStatus.BAD_REQUEST);

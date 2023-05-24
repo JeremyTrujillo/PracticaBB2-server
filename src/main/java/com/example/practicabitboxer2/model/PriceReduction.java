@@ -4,7 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -21,12 +20,9 @@ public class PriceReduction {
     @Column(name = "reducedprice")
     private Float reducedPrice;
 
-    @Column(name = "startDate")
+    @Column(name = "startdate")
     private Date startDate;
 
-    @Column(name = "endDate")
+    @Column(name = "enddate")
     private Date endDate;
-
-    @ManyToMany(mappedBy = "priceReductions")
-    private List<Item> items;
 }

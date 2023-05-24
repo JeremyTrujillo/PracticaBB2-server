@@ -14,8 +14,11 @@ import java.util.Optional;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    @EntityGraph(attributePaths = "suppliers")
-    Optional<Item> findByItemCode(long itemCode);
+    @EntityGraph(value = "ItemWithSuppliers")
+    Optional<Item> findOneWithSuppliersByItemCode(long itemCode);
+
+    @EntityGraph(value = "ItemWithPriceReductions")
+    Optional<Item> findOneWithPriceReductionsByItemCode(long itemCode);
 
     List<Item> findByState(ItemState state);
 

@@ -37,8 +37,7 @@ class ItemServiceTest {
     @Test
     void findAll() {
         List<ItemDTO> testList = newArrayList(firstItem().build(), secondItem().build());
-        List<Item> entityList = testList.stream().map(ItemUtils::dtoToEntity).collect(Collectors.toList());
-        when(itemRepository.findAll()).thenReturn(entityList);
+        when(itemRepository.findAll()).thenReturn(ItemUtils.dtoToEntities(testList));
         List<ItemDTO> all = itemService.findAll();
         assertArrayEquals(testList.toArray(), all.toArray());
     }
@@ -46,8 +45,8 @@ class ItemServiceTest {
     @Test
     void findByItemCode() {
         ItemDTO first = firstItem().build();
-        when(itemRepository.findByItemCode(1)).thenReturn(Optional.of(ItemUtils.dtoToEntity(first)));
-        when(itemRepository.findByItemCode(3)).thenReturn(Optional.empty());
+        when(itemRepository.findOneWithPriceReductionsByItemCode(1)).thenReturn(Optional.of(ItemUtils.dtoToEntity(first)));
+        when(itemRepository.findOneWithPriceReductionsByItemCode(3)).thenReturn(Optional.empty());
         assertEquals(first, itemService.findByItemCode(1));
         assertNull(itemService.findByItemCode(3));
     }
