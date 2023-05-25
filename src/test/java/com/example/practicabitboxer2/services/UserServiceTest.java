@@ -7,6 +7,7 @@ import com.example.practicabitboxer2.utils.UserUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +38,16 @@ class UserServiceTest {
     }
 
     @Test
+    void findById() {
+        UserDTO first = firstUser().build();
+        long nonexistentId = 3;
+        when(userRepository.findById(first.getId())).thenReturn(Optional.of(UserUtils.dtoToEntity(first)));
+        when(userRepository.findById(nonexistentId)).thenReturn(Optional.empty());
+        assertEquals(first, userService.findById(first.getId()));
+        assertNull(userService.findById(nonexistentId));
+    }
+
+    @Test
     void findByUsername() {
         UserDTO first = firstUser().build();
         when(userRepository.findByUsername(first.getUsername())).thenReturn(Optional.of(UserUtils.dtoToEntity(first)));
@@ -57,10 +68,13 @@ class UserServiceTest {
     void saveUser() {
         UserDTO firstUser = firstUser().build();
         String password = firstUser.getPassword();
-        when(passwordEncoder.encode(password)).thenReturn(password);
+        when(passwordEncoder.encode(password)).thenReturn("Encoded password");
         userService.saveUser(firstUser);
         User entity = UserUtils.dtoToEntity(firstUser);
-        verify(userRepository, times(1)).save(entity);
+        ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository, times(1)).save(argumentCaptor.capture());
+        User savedUser = argumentCaptor.getValue();
+        assertEquals("Encoded password", savedUser.getPassword());
     }
 
     @Test

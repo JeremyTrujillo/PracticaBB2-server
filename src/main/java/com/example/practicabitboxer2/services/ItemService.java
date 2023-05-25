@@ -1,10 +1,14 @@
 package com.example.practicabitboxer2.services;
 
 import com.example.practicabitboxer2.dtos.ItemDTO;
+import com.example.practicabitboxer2.dtos.UserDTO;
 import com.example.practicabitboxer2.model.Item;
+import com.example.practicabitboxer2.model.ItemDeactivator;
 import com.example.practicabitboxer2.model.ItemState;
+import com.example.practicabitboxer2.model.User;
 import com.example.practicabitboxer2.repositories.ItemRepository;
 import com.example.practicabitboxer2.utils.ItemUtils;
+import com.example.practicabitboxer2.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -21,6 +25,14 @@ import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
 public class ItemService {
 
     private final @NonNull ItemRepository repository;
+
+    public ItemDTO findById(long id) {
+        Item item = repository.findById(id).orElse(null);
+        if (item == null) {
+            return null;
+        }
+        return ItemUtils.entityToDto(item, true);
+    }
 
     @Transactional
     public ItemDTO findByItemCode(long itemCode) {
@@ -46,13 +58,19 @@ public class ItemService {
         repository.save(ItemUtils.dtoToEntity(item));
     }
 
-    public void deleteByItemCode(long itemCode) {
-        repository.deleteByItemCode(itemCode);
+    public void deactivateItem(ItemDTO itemDTO, UserDTO userDTO, String reason) {
+        Item item = ItemUtils.dtoToEntity(itemDTO);
+        item.setState(DISCONTINUED);
+        User user = UserUtils.dtoToEntity(userDTO);
+        ItemDeactivator itemDeactivator = new ItemDeactivator();
+        itemDeactivator.setItem(item);
+        itemDeactivator.setDeactivator(user);
+        itemDeactivator.setReason(reason);
+        item.setDeactivator(itemDeactivator);
+        repository.save(item);
     }
 
-    public void deactivateItem(ItemDTO item) {
-        Item entity = ItemUtils.dtoToEntity(item);
-        entity.setState(DISCONTINUED);
-        repository.save(entity);
+    public void deleteByItemCode(long itemCode) {
+        repository.deleteByItemCode(itemCode);
     }
 }

@@ -1,11 +1,10 @@
 package com.example.practicabitboxer2.controller;
 
-import com.example.practicabitboxer2.dtos.ItemDTO;
-import com.example.practicabitboxer2.dtos.PriceReductionDTO;
-import com.example.practicabitboxer2.dtos.SupplierDTO;
+import com.example.practicabitboxer2.dtos.*;
 import com.example.practicabitboxer2.exceptions.*;
 import com.example.practicabitboxer2.model.ItemState;
 import com.example.practicabitboxer2.services.ItemService;
+import com.example.practicabitboxer2.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,17 +21,20 @@ import java.util.Set;
 
 import static com.example.practicabitboxer2.model.ItemState.ACTIVE;
 import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ItemController {
 
-    private final @NonNull ItemService service;
+    private final @NonNull ItemService itemService;
+    private final @NonNull UserService userService;
 
     @GetMapping(value = "/{code}")
     public ResponseEntity<ItemDTO> findByItemCode(@PathVariable long code) {
-        ItemDTO byItemCode = service.findByItemCode(code);
+        ItemDTO byItemCode = itemService.findByItemCode(code);
         if (byItemCode == null) {
             throw new ItemNotFoundException();
         }
@@ -41,7 +43,7 @@ public class ItemController {
 
     @GetMapping()
     public ResponseEntity<List<ItemDTO>> findAll() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(itemService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/active")
@@ -57,13 +59,13 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<Void> createItem(@RequestBody ItemDTO item) {
         checkItemConstraints(item);
-        ItemDTO itemByCode = service.findByItemCode(item.getItemCode());
+        ItemDTO itemByCode = itemService.findByItemCode(item.getItemCode());
         if (itemByCode != null) {
             throw new ItemCodeAlreadyExistsException();
         }
         item.setState(ACTIVE.getName());
         item.setCreationDate(new Date());
-        service.saveItem(item);
+        itemService.saveItem(item);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -78,7 +80,7 @@ public class ItemController {
         if (!"ACTIVE".equals(item.getState())) {
             throw new ItemInvalidStateException();
         }
-        ItemDTO itemByCode = service.findByItemCode(item.getItemCode());
+        ItemDTO itemByCode = itemService.findByItemCode(item.getItemCode());
         if (itemByCode == null) {
             throw new ItemNotFoundException();
         }
@@ -87,36 +89,41 @@ public class ItemController {
         }
         item.setCreationDate(itemByCode.getCreationDate());
         item.setCreator(itemByCode.getCreator());
-        service.saveItem(item);
+        itemService.saveItem(item);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping
-    public ResponseEntity<Void> deleteByItemCode(@RequestParam long itemCode) {
-        ItemDTO item = service.findByItemCode(itemCode);
-        if (item == null) {
-            throw new ItemNotFoundException();
-        }
-        service.deleteByItemCode(itemCode);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private ResponseEntity<List<ItemDTO>> findByState(ItemState state) {
-        return new ResponseEntity<>(this.service.findByState(state), HttpStatus.OK);
     }
 
     @PutMapping("/deactivate")
-    public ResponseEntity<Void> deactivateItem(@RequestParam long itemCode) {
-        ItemDTO item = service.findByItemCode(itemCode);
+    public ResponseEntity<Void> deactivateItem(@RequestBody ItemDeactivatorDTO itemDeactivator) {
+        checkItemDeactivatorConstraints(itemDeactivator);
+        ItemDTO item = itemService.findById(itemDeactivator.getItemId());
         if (item == null) {
             throw new ItemNotFoundException();
         }
         if (!ACTIVE.getName().equals(item.getState())) {
             throw new ItemAlreadyDiscontinuedException();
         }
-        service.deactivateItem(item);
+        UserDTO user = userService.findById(itemDeactivator.getUserId());
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        itemService.deactivateItem(item, user, itemDeactivator.getReason());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping
+    public ResponseEntity<Void> deleteByItemCode(@RequestParam long itemCode) {
+        ItemDTO item = itemService.findByItemCode(itemCode);
+        if (item == null) {
+            throw new ItemNotFoundException();
+        }
+        itemService.deleteByItemCode(itemCode);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private ResponseEntity<List<ItemDTO>> findByState(ItemState state) {
+        return new ResponseEntity<>(this.itemService.findByState(state), HttpStatus.OK);
     }
 
     private void checkItemConstraints(ItemDTO item) {
@@ -131,16 +138,43 @@ public class ItemController {
         }
     }
 
-    private void checkSupplierConstraints(List<SupplierDTO> newItemSuppliers) {
-        Set<SupplierDTO> suppliersSet = new HashSet<>(newItemSuppliers);
-        if (suppliersSet.size() != newItemSuppliers.size()) {
+    private void checkSupplierConstraints(List<SupplierDTO> suppliers) {
+        if (suppliers == null) {
+            throw new ItemEmptySuppliersException();
+        }
+        Set<SupplierDTO> suppliersSet = new HashSet<>(suppliers);
+        if (suppliersSet.size() != suppliers.size()) {
             throw new ItemSupplierDuplicatedException();
         }
     }
 
     private void checkPriceReductionsConstraints(List<PriceReductionDTO> priceReductions) {
         if (priceReductions == null) {
-            throw new OverlappingPriceReductionsException();
+            throw new ItemEmptyPriceReductionsException();
+        }
+        priceReductions.sort(PriceReductionDTO::compareTo);
+        for (int i = 0; i < priceReductions.size() - 1; i++) {
+            PriceReductionDTO first = priceReductions.get(i);
+            PriceReductionDTO second = priceReductions.get(i+1);
+            if (max(first.getStartDate().getTime(), second.getStartDate().getTime())
+                    <= min(first.getEndDate().getTime(), second.getEndDate().getTime())) {
+                throw new OverlappingPriceReductionsException();
+            }
+        }
+    }
+
+    private void checkItemDeactivatorConstraints(ItemDeactivatorDTO itemDeactivator) {
+        if (itemDeactivator == null) {
+            throw new ItemDeactivatorEmptyException();
+        }
+        if (itemDeactivator.getItemId() == null) {
+            throw new ItemDeactivatorEmptyItemIdException();
+        }
+        if (itemDeactivator.getUserId() == null) {
+            throw new ItemDeactivatorEmptyUserIdException();
+        }
+        if (!StringUtils.hasText(itemDeactivator.getReason())) {
+            throw new ItemDeactivatorEmptyReasonException();
         }
     }
 }

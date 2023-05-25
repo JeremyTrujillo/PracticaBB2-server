@@ -1,6 +1,7 @@
 package com.example.practicabitboxer2.utils;
 
 import com.example.practicabitboxer2.utils.builders.ItemBuilder;
+import com.example.practicabitboxer2.utils.builders.ItemDeactivatorBuilder;
 import com.example.practicabitboxer2.utils.builders.UserBuilder;
 
 import java.time.LocalDate;
@@ -87,5 +88,11 @@ public class TestUtils {
                 .withCreator(firstUser().build());
     }
 
+    public static ItemDeactivatorBuilder firstItemDeactivator() {
+        return ItemDeactivatorBuilder.itemDeactivatorBuilder()
+                .withItemId(1L)
+                .withUserId(1L)
+                .withReason("Discontinued");
+    }
 
 }

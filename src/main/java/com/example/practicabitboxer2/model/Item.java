@@ -1,6 +1,8 @@
 package com.example.practicabitboxer2.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -58,4 +60,9 @@ public class Item {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "creator")
     private User creator;
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    private ItemDeactivator deactivator;
 }

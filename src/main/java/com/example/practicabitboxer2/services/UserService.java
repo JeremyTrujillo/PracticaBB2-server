@@ -20,6 +20,14 @@ public class UserService {
     private final @NonNull UserRepository repository;
     private final @NonNull PasswordEncoder passwordEncoder;
 
+    public UserDTO findById(long id) {
+        User user = repository.findById(id).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        return UserUtils.entityToDto(user);
+    }
+
     public UserDTO findByUsername(String username) {
         User user = repository.findByUsername(username).orElse(null);
         if (user == null) {

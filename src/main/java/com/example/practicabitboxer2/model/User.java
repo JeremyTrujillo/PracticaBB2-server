@@ -4,6 +4,9 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
@@ -24,4 +27,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
+
+    @OneToMany(mappedBy = "deactivator", cascade = CascadeType.ALL)
+    private Set<ItemDeactivator> itemDeactivators = new HashSet<>();
 }

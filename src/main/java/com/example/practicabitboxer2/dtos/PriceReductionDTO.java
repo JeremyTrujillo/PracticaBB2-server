@@ -10,4 +10,12 @@ public class PriceReductionDTO {
     private Float reducedPrice;
     private Date startDate;
     private Date endDate;
+
+    public int compareTo(PriceReductionDTO dto) {
+        int i = this.startDate.compareTo(dto.startDate);
+        if (i != 0) {
+            return i;
+        }
+        return this.endDate.compareTo(dto.endDate);
+    }
 }
