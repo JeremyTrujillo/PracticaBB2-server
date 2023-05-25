@@ -22,6 +22,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findByState(ItemState state);
 
+    List<Item> findCheapestBySupplier();
+
     @Transactional
     @Modifying
     void deleteByItemCode(long itemCode);

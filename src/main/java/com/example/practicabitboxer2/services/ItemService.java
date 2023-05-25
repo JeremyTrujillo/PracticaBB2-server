@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
 
@@ -46,12 +45,17 @@ public class ItemService {
 
     public List<ItemDTO> findAll() {
         List<Item> items = repository.findAll();
-        return items.stream().map(item -> ItemUtils.entityToDto(item, false)).collect(Collectors.toList());
+        return ItemUtils.entitiesToDtos(items, false);
     }
 
     public List<ItemDTO> findByState(ItemState state) {
         List<Item> items = repository.findByState(state);
-        return items.stream().map(item -> ItemUtils.entityToDto(item, false)).collect(Collectors.toList());
+        return ItemUtils.entitiesToDtos(items,false);
+    }
+
+    public List<ItemDTO> findCheapestBySupplier() {
+        List<Item> cheapestBySupplier = repository.findCheapestBySupplier();
+        return ItemUtils.entitiesToDtos(cheapestBySupplier, true);
     }
 
     public void saveItem(ItemDTO item) {

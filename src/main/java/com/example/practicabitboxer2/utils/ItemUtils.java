@@ -44,8 +44,11 @@ public class ItemUtils {
         return itemDTO;
     }
 
+    public static List<Item> dtoToEntities(List<ItemDTO> dtos) {
+        return dtos.stream().map(ItemUtils::dtoToEntity).collect(Collectors.toList());
+    }
 
-    public static List<Item> dtoToEntities(List<ItemDTO> testList) {
-        return testList.stream().map(ItemUtils::dtoToEntity).collect(Collectors.toList());
+    public static List<ItemDTO> entitiesToDtos(List<Item> entities, boolean detailed) {
+        return entities.stream().map((Item entity) -> entityToDto(entity, detailed)).collect(Collectors.toList());
     }
 }

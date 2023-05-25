@@ -56,6 +56,11 @@ public class ItemController {
         return this.findByState(DISCONTINUED);
     }
 
+    @GetMapping(value = "/cheapestBySupplier")
+    public ResponseEntity<List<ItemDTO>> findCheapestBySupplier() {
+        return new ResponseEntity<>(itemService.findCheapestBySupplier(), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Void> createItem(@RequestBody ItemDTO item) {
         checkItemConstraints(item);
