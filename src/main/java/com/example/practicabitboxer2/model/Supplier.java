@@ -11,6 +11,18 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity
 @Table(name = "suppliers")
 @Data
+@NamedNativeQuery(name = "Supplier.findWithReducedItems",
+        query = "SELECT DISTINCT ON (suppliers.id) * " +
+                "FROM SUPPLIERS suppliers " +
+                "INNER JOIN ITEMS_SUPPLIERS i_s " +
+                "ON suppliers.id = i_s.supplier_id " +
+                "WHERE i_s.item_id IN (" +
+                    "SELECT items.id " +
+                    "FROM ITEMS items " +
+                    "INNER JOIN ITEMS_PRICEREDUCTIONS i_p " +
+                    "ON items.id = i_p.item_id" +
+                ")",
+        resultClass = Supplier.class)
 public class Supplier {
 
     @Id

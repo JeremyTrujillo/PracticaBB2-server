@@ -22,7 +22,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findByState(ItemState state);
 
-    List<Item> findCheapestBySupplier();
+    List<Item> findCheapestPerSupplier();
 
     @Transactional
     @Modifying

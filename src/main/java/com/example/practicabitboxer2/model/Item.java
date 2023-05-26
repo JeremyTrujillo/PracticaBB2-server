@@ -20,12 +20,16 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @NamedEntityGraph(name = "ItemWithPriceReductions", attributeNodes = {
         @NamedAttributeNode("priceReductions")
 })
-@NamedNativeQuery(name = "Item.findCheapestBySupplier",
-        query = "SELECT * FROM ITEMS items WHERE items.id IN (" +
+@NamedNativeQuery(name = "Item.findCheapestPerSupplier",
+        query = "SELECT * " +
+                "FROM ITEMS items " +
+                "WHERE items.id IN (" +
                     "SELECT id FROM (" +
                         "SELECT item.id, item.price, i_s.supplier_id, " +
                             "row_number() OVER (partition by i_s.supplier_id ORDER BY item.price) as rn " +
-                        "FROM Items item JOIN items_suppliers i_s ON i_s.item_id = item.id) " +
+                        "FROM Items item " +
+                        "JOIN items_suppliers i_s " +
+                        "ON i_s.item_id = item.id) " +
                     "WHERE rn = 1)", resultClass = Item.class)
 public class Item {
 

@@ -56,9 +56,9 @@ public class ItemController {
         return this.findByState(DISCONTINUED);
     }
 
-    @GetMapping(value = "/cheapestBySupplier")
-    public ResponseEntity<List<ItemDTO>> findCheapestBySupplier() {
-        return new ResponseEntity<>(itemService.findCheapestBySupplier(), HttpStatus.OK);
+    @GetMapping(value = "/cheapestPerSupplier")
+    public ResponseEntity<List<ItemDTO>> findCheapestPerSupplier() {
+        return new ResponseEntity<>(itemService.findCheapestPerSupplier(), HttpStatus.OK);
     }
 
     @PostMapping

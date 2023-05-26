@@ -53,9 +53,9 @@ public class ItemService {
         return ItemUtils.entitiesToDtos(items,false);
     }
 
-    public List<ItemDTO> findCheapestBySupplier() {
-        List<Item> cheapestBySupplier = repository.findCheapestBySupplier();
-        return ItemUtils.entitiesToDtos(cheapestBySupplier, true);
+    public List<ItemDTO> findCheapestPerSupplier() {
+        List<Item> cheapestPerSupplier = repository.findCheapestPerSupplier();
+        return ItemUtils.entitiesToDtos(cheapestPerSupplier, true);
     }
 
     public void saveItem(ItemDTO item) {
