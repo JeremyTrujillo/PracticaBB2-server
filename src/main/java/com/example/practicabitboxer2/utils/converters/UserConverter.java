@@ -1,19 +1,16 @@
-package com.example.practicabitboxer2.utils;
+package com.example.practicabitboxer2.utils.converters;
 
 import com.example.practicabitboxer2.dtos.UserDTO;
 import com.example.practicabitboxer2.model.Role;
 import com.example.practicabitboxer2.model.User;
+import com.example.practicabitboxer2.utils.Converter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserUtils {
+public class UserConverter implements Converter<User, UserDTO> {
 
-    private UserUtils() {
-        throw new IllegalStateException();
-    }
-
-    public static User dtoToEntity(UserDTO dto) {
+    public User dtoToEntity(UserDTO dto) {
         User user = new User();
         if (dto == null) {
             return user;
@@ -25,7 +22,7 @@ public class UserUtils {
         return user;
     }
 
-    public static UserDTO entityToDto(User entity) {
+    public UserDTO entityToDto(User entity) {
         UserDTO dto = new UserDTO();
         if (entity == null) {
             return dto;
@@ -37,7 +34,11 @@ public class UserUtils {
         return dto;
     }
 
-    public static List<User> dtoToEntities(List<UserDTO> testList) {
-        return testList.stream().map(UserUtils::dtoToEntity).collect(Collectors.toList());
+    public List<User> dtosToEntities(List<UserDTO> testList) {
+        return testList.stream().map(this::dtoToEntity).collect(Collectors.toList());
+    }
+
+    public List<UserDTO> entitiesToDtos(List<User> users) {
+        return users.stream().map(this::entityToDto).collect(Collectors.toList());
     }
 }

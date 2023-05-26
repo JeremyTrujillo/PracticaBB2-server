@@ -6,8 +6,8 @@ import com.example.practicabitboxer2.model.Item;
 import com.example.practicabitboxer2.model.ItemDeactivator;
 import com.example.practicabitboxer2.model.User;
 import com.example.practicabitboxer2.repositories.ItemRepository;
-import com.example.practicabitboxer2.utils.ItemUtils;
-import com.example.practicabitboxer2.utils.UserUtils;
+import com.example.practicabitboxer2.utils.converters.ItemConverter;
+import com.example.practicabitboxer2.utils.converters.UserConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +30,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ItemServiceTest {
 
+    private final ItemConverter itemConverter = new ItemConverter();
+    private final UserConverter userConverter = new UserConverter();
     private ItemService itemService;
 
     @Mock
@@ -45,7 +47,7 @@ class ItemServiceTest {
         List<ItemDTO> testList = newArrayList(
                 firstItem().withSuppliers(Collections.emptyList()).withPriceReductions(Collections.emptyList()).build(),
                 secondItem().withSuppliers(Collections.emptyList()).withPriceReductions(Collections.emptyList()).build());
-        when(itemRepository.findAll()).thenReturn(ItemUtils.dtoToEntities(testList));
+        when(itemRepository.findAll()).thenReturn(itemConverter.dtosToEntities(testList));
         List<ItemDTO> all = itemService.findAll();
         assertArrayEquals(testList.toArray(), all.toArray());
     }
@@ -54,7 +56,7 @@ class ItemServiceTest {
     void findById() {
         ItemDTO first = firstItem().build();
         long nonexistentId = 3;
-        when(itemRepository.findById(first.getId())).thenReturn(Optional.of(ItemUtils.dtoToEntity(first)));
+        when(itemRepository.findById(first.getId())).thenReturn(Optional.of(itemConverter.dtoToEntity(first)));
         when(itemRepository.findById(nonexistentId)).thenReturn(Optional.empty());
         assertEquals(first, itemService.findById(first.getId()));
         assertNull(itemService.findById(nonexistentId));
@@ -64,9 +66,9 @@ class ItemServiceTest {
     void findByItemCode() {
         ItemDTO first = firstItem().build();
         long nonexistentCode = 3;
-        when(itemRepository.findOneWithPriceReductionsByItemCode(first.getItemCode()))
-                .thenReturn(Optional.of(ItemUtils.dtoToEntity(first)));
-        when(itemRepository.findOneWithPriceReductionsByItemCode(nonexistentCode)).thenReturn(Optional.empty());
+        when(itemRepository.findByItemCode(first.getItemCode()))
+                .thenReturn(Optional.of(itemConverter.dtoToEntity(first)));
+        when(itemRepository.findByItemCode(nonexistentCode)).thenReturn(Optional.empty());
         assertEquals(first, itemService.findByItemCode(first.getItemCode()));
         assertNull(itemService.findByItemCode(nonexistentCode));
     }
@@ -75,7 +77,7 @@ class ItemServiceTest {
     void findByState() {
         List<ItemDTO> testList = newArrayList(
                 firstItem().withSuppliers(Collections.emptyList()).withPriceReductions(Collections.emptyList()).build());
-        List<Item> entityList = testList.stream().map(ItemUtils::dtoToEntity).collect(Collectors.toList());
+        List<Item> entityList = testList.stream().map(itemConverter::dtoToEntity).collect(Collectors.toList());
         when(itemRepository.findByState(ACTIVE)).thenReturn(entityList);
         List<ItemDTO> all = itemService.findByState(ACTIVE);
         assertArrayEquals(testList.toArray(), all.toArray());
@@ -84,7 +86,7 @@ class ItemServiceTest {
     @Test
     void saveItem() {
         ItemDTO firstItem = firstItem().build();
-        Item firstEntity = ItemUtils.dtoToEntity(firstItem);
+        Item firstEntity = itemConverter.dtoToEntity(firstItem);
         itemService.saveItem(firstItem);
         verify(itemRepository, times(1)).save(firstEntity);
     }
@@ -92,9 +94,9 @@ class ItemServiceTest {
     @Test
     void deactivateItem() {
         ItemDTO item = firstItem().build();
-        Item itemEntity = ItemUtils.dtoToEntity(item);
+        Item itemEntity = itemConverter.dtoToEntity(item);
         UserDTO user = firstUser().build();
-        User userEntity = UserUtils.dtoToEntity(user);
+        User userEntity = userConverter.dtoToEntity(user);
         String reason = "Reason";
         ArgumentCaptor<Item> argumentCaptor = ArgumentCaptor.forClass(Item.class);
         itemService.deactivateItem(item, user, reason);

@@ -3,7 +3,7 @@ package com.example.practicabitboxer2.services;
 import com.example.practicabitboxer2.dtos.UserDTO;
 import com.example.practicabitboxer2.model.User;
 import com.example.practicabitboxer2.repositories.UserRepository;
-import com.example.practicabitboxer2.utils.UserUtils;
+import com.example.practicabitboxer2.utils.converters.UserConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
+    private final UserConverter userConverter = new UserConverter();
     private UserService userService;
 
     @Mock
@@ -41,7 +42,7 @@ class UserServiceTest {
     void findById() {
         UserDTO first = firstUser().build();
         long nonexistentId = 3;
-        when(userRepository.findById(first.getId())).thenReturn(Optional.of(UserUtils.dtoToEntity(first)));
+        when(userRepository.findById(first.getId())).thenReturn(Optional.of(userConverter.dtoToEntity(first)));
         when(userRepository.findById(nonexistentId)).thenReturn(Optional.empty());
         assertEquals(first, userService.findById(first.getId()));
         assertNull(userService.findById(nonexistentId));
@@ -50,7 +51,7 @@ class UserServiceTest {
     @Test
     void findByUsername() {
         UserDTO first = firstUser().build();
-        when(userRepository.findByUsername(first.getUsername())).thenReturn(Optional.of(UserUtils.dtoToEntity(first)));
+        when(userRepository.findByUsername(first.getUsername())).thenReturn(Optional.of(userConverter.dtoToEntity(first)));
         when(userRepository.findByUsername("")).thenReturn(Optional.empty());
         assertEquals(first, userService.findByUsername(first.getUsername()));
         assertNull(userService.findByUsername(""));
@@ -59,7 +60,7 @@ class UserServiceTest {
     @Test
     void findAll() {
         List<UserDTO> testList = newArrayList(firstUser().build(), secondUser().build());
-        when(userRepository.findAll()).thenReturn(UserUtils.dtoToEntities(testList));
+        when(userRepository.findAll()).thenReturn(userConverter.dtosToEntities(testList));
         List<UserDTO> all = userService.findAll();
         assertArrayEquals(all.toArray(), testList.toArray());
     }
@@ -70,7 +71,6 @@ class UserServiceTest {
         String password = firstUser.getPassword();
         when(passwordEncoder.encode(password)).thenReturn("Encoded password");
         userService.saveUser(firstUser);
-        User entity = UserUtils.dtoToEntity(firstUser);
         ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository, times(1)).save(argumentCaptor.capture());
         User savedUser = argumentCaptor.getValue();

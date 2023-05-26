@@ -1,18 +1,15 @@
-package com.example.practicabitboxer2.utils;
+package com.example.practicabitboxer2.utils.converters;
 
 import com.example.practicabitboxer2.dtos.PriceReductionDTO;
 import com.example.practicabitboxer2.model.PriceReduction;
+import com.example.practicabitboxer2.utils.Converter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PriceReductionUtils {
+public class PriceReductionConverter implements Converter<PriceReduction, PriceReductionDTO> {
 
-    private PriceReductionUtils() {
-        throw new IllegalStateException();
-    }
-
-    private static PriceReduction dtoToEntity(PriceReductionDTO priceReductionDTO) {
+    public PriceReduction dtoToEntity(PriceReductionDTO priceReductionDTO) {
         PriceReduction priceReduction = new PriceReduction();
         priceReduction.setId(priceReductionDTO.getId());
         priceReduction.setReducedPrice(priceReductionDTO.getReducedPrice());
@@ -21,7 +18,7 @@ public class PriceReductionUtils {
         return priceReduction;
     }
 
-    public static PriceReductionDTO entityToDto(PriceReduction entity) {
+    public PriceReductionDTO entityToDto(PriceReduction entity) {
         PriceReductionDTO dto = new PriceReductionDTO();
         dto.setId(entity.getId());
         dto.setReducedPrice(entity.getReducedPrice());
@@ -30,11 +27,11 @@ public class PriceReductionUtils {
         return dto;
     }
 
-    public static List<PriceReduction> dtosToEntities(List<PriceReductionDTO> priceReductions) {
-        return priceReductions.stream().map(PriceReductionUtils::dtoToEntity).collect(Collectors.toList());
+    public List<PriceReduction> dtosToEntities(List<PriceReductionDTO> priceReductions) {
+        return priceReductions.stream().map(this::dtoToEntity).collect(Collectors.toList());
     }
 
-    public static List<PriceReductionDTO> entitiesToDtos(List<PriceReduction> entities) {
-        return entities.stream().map(PriceReductionUtils::entityToDto).collect(Collectors.toList());
+    public List<PriceReductionDTO> entitiesToDtos(List<PriceReduction> entities) {
+        return entities.stream().map(this::entityToDto).collect(Collectors.toList());
     }
 }

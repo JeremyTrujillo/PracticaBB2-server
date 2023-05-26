@@ -14,12 +14,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity
 @Table(name = "items")
 @Data
-@NamedEntityGraph(name = "ItemWithSuppliers", attributeNodes = {
-        @NamedAttributeNode("suppliers")
-})
-@NamedEntityGraph(name = "ItemWithPriceReductions", attributeNodes = {
-        @NamedAttributeNode("priceReductions")
-})
 @NamedNativeQuery(name = "Item.findCheapestPerSupplier",
         query = "SELECT * " +
                 "FROM ITEMS items " +
