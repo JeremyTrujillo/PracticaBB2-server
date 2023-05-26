@@ -1,8 +1,6 @@
 package com.example.practicabitboxer2.utils;
 
-import com.example.practicabitboxer2.utils.builders.ItemBuilder;
-import com.example.practicabitboxer2.utils.builders.ItemDeactivatorBuilder;
-import com.example.practicabitboxer2.utils.builders.UserBuilder;
+import com.example.practicabitboxer2.utils.builders.*;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,6 +11,7 @@ import static com.example.practicabitboxer2.model.ItemState.ACTIVE;
 import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
 import static com.example.practicabitboxer2.model.Role.ADMIN;
 import static com.example.practicabitboxer2.model.Role.USER;
+import static org.assertj.core.util.Lists.newArrayList;
 
 public class TestUtils {
 
@@ -55,8 +54,8 @@ public class TestUtils {
                 .withState(ACTIVE.getName())
                 .withCreationDate(Date.from(LocalDate.of(2023, 5, 19)
                         .atStartOfDay(ZoneId.systemDefault()).toInstant()))
-                .withSuppliers(Collections.emptyList())
-                .withPriceReductions(Collections.emptyList())
+                .withSuppliers(newArrayList(firstSupplier().build(), secondSupplier().build()))
+                .withPriceReductions(newArrayList(secondPriceReduction().build()))
                 .withCreator(firstUser().build());
     }
 
@@ -70,7 +69,7 @@ public class TestUtils {
                 .withCreationDate(Date.from(LocalDate.of(2023, 2, 10)
                         .atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .withSuppliers(Collections.emptyList())
-                .withPriceReductions(Collections.emptyList())
+                .withPriceReductions(newArrayList(firstPriceReduction().build()))
                 .withCreator(secondUser().build());
     }
 
@@ -86,6 +85,40 @@ public class TestUtils {
                 .withSuppliers(Collections.emptyList())
                 .withPriceReductions(Collections.emptyList())
                 .withCreator(firstUser().build());
+    }
+
+    public static SupplierBuilder firstSupplier() {
+        return SupplierBuilder.supplierBuilder()
+                .withId(1L)
+                .withName("First supplier")
+                .withCountry("Spain");
+    }
+
+    public static SupplierBuilder secondSupplier() {
+        return SupplierBuilder.supplierBuilder()
+                .withId(2L)
+                .withName("Second supplier")
+                .withCountry("Spain");
+    }
+
+    public static PriceReductionBuilder firstPriceReduction() {
+        return PriceReductionBuilder.priceReductionBuilder()
+                .withId(1L)
+                .withReducedPrice(5F)
+                .withStartDate(Date.from(LocalDate.of(2023, 5, 17)
+                        .atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .withEndDate(Date.from(LocalDate.of(2023, 5, 19)
+                        .atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    }
+
+    public static PriceReductionBuilder secondPriceReduction() {
+        return PriceReductionBuilder.priceReductionBuilder()
+                .withId(2L)
+                .withReducedPrice(2F)
+                .withStartDate(Date.from(LocalDate.of(2023, 5, 20)
+                        .atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .withEndDate(Date.from(LocalDate.of(2023, 5, 22)
+                        .atStartOfDay(ZoneId.systemDefault()).toInstant()));
     }
 
     public static ItemDeactivatorBuilder firstItemDeactivator() {

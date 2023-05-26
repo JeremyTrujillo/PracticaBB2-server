@@ -15,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,7 +42,9 @@ class ItemServiceTest {
 
     @Test
     void findAll() {
-        List<ItemDTO> testList = newArrayList(firstItem().build(), secondItem().build());
+        List<ItemDTO> testList = newArrayList(
+                firstItem().withSuppliers(Collections.emptyList()).withPriceReductions(Collections.emptyList()).build(),
+                secondItem().withSuppliers(Collections.emptyList()).withPriceReductions(Collections.emptyList()).build());
         when(itemRepository.findAll()).thenReturn(ItemUtils.dtoToEntities(testList));
         List<ItemDTO> all = itemService.findAll();
         assertArrayEquals(testList.toArray(), all.toArray());
@@ -70,7 +73,8 @@ class ItemServiceTest {
 
     @Test
     void findByState() {
-        List<ItemDTO> testList = newArrayList(firstItem().build());
+        List<ItemDTO> testList = newArrayList(
+                firstItem().withSuppliers(Collections.emptyList()).withPriceReductions(Collections.emptyList()).build());
         List<Item> entityList = testList.stream().map(ItemUtils::dtoToEntity).collect(Collectors.toList());
         when(itemRepository.findByState(ACTIVE)).thenReturn(entityList);
         List<ItemDTO> all = itemService.findByState(ACTIVE);
