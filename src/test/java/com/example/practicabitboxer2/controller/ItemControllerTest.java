@@ -130,43 +130,50 @@ class ItemControllerTest {
 
     @Test
     void editInvalidItem() {
+        ItemDTO nullIdItem = firstItem().withId(null).build();
         ItemDTO nullCodeItem = firstItem().withItemCode(null).build();
+        ItemDTO invalidCodeItem = firstItem().withItemCode(2L).build();
         ItemDTO nullDescriptionItem = firstItem().withDescription(null).build();
         ItemDTO invalidDescriptionItem = firstItem().withDescription("").build();
         ItemDTO discontinuedItem = firstItem().withState(DISCONTINUED.getName()).build();
         ItemDTO firstItem = firstItem().build();
-        long firstItemCode = firstItem.getItemCode();
-        long invalidItemCode = firstItemCode + 10;
+        long firstItemId = firstItem.getId();
+        long invalidItemId = firstItemId + 10;
+        when(itemService.findById(firstItemId)).thenReturn(firstItem);
         assertThrows(ItemEmptyException.class,
-                () -> itemController.editItem(null, firstItemCode));
+                () -> itemController.editItem(null, firstItemId));
+        assertThrows(ItemEmptyIdException.class,
+                () -> itemController.editItem(nullIdItem, firstItemId));
         assertThrows(ItemEmptyCodeException.class,
-                () -> itemController.editItem(nullCodeItem, firstItemCode));
+                () -> itemController.editItem(nullCodeItem, firstItemId));
         assertThrows(ItemEmptyDescriptionException.class,
-                () -> itemController.editItem(nullDescriptionItem, firstItemCode));
+                () -> itemController.editItem(nullDescriptionItem, firstItemId));
         assertThrows(ItemEmptyDescriptionException.class,
-                () -> itemController.editItem(invalidDescriptionItem, firstItemCode));
-        assertThrows(ItemInvalidStateException.class,
-                () -> itemController.editItem(discontinuedItem, firstItemCode));
+                () -> itemController.editItem(invalidDescriptionItem, firstItemId));
+        assertThrows(ItemInvalidIdException.class,
+                () -> itemController.editItem(firstItem, invalidItemId));
         assertThrows(ItemInvalidCodeException.class,
-                () -> itemController.editItem(firstItem, invalidItemCode));
+                () -> itemController.editItem(invalidCodeItem, firstItemId));
+        assertThrows(ItemInvalidStateException.class,
+                () -> itemController.editItem(discontinuedItem, firstItemId));
     }
 
     @Test
     void editNonexistentItem() {
         ItemDTO item = firstItem().build();
-        long itemCode = item.getItemCode();
-        when(itemService.findByItemCode(itemCode)).thenReturn(null);
+        long id = item.getId();
+        when(itemService.findById(id)).thenReturn(null);
         assertThrows(ItemNotFoundException.class,
-                () -> itemController.editItem(item, itemCode));
+                () -> itemController.editItem(item, id));
     }
 
     @Test
     void editValidItem() {
         ItemDTO firstItem = firstItem().build();
         ItemDTO item = firstItem().withDescription("editedDescription").withCreator(null).withCreationDate(null).build();
-        when(itemService.findByItemCode(item.getItemCode())).thenReturn(firstItem);
+        when(itemService.findById(item.getId())).thenReturn(firstItem);
         ArgumentCaptor<ItemDTO> argumentCaptor = ArgumentCaptor.forClass(ItemDTO.class);
-        HttpStatus statusCode = itemController.editItem(item, item.getItemCode()).getStatusCode();
+        HttpStatus statusCode = itemController.editItem(item, item.getId()).getStatusCode();
         assertEquals(OK, statusCode);
         verify(itemService, times(1)).saveItem(argumentCaptor.capture());
         ItemDTO savedItem = argumentCaptor.getValue();

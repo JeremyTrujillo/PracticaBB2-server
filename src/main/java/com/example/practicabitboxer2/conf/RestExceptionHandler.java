@@ -11,10 +11,16 @@ import static org.springframework.http.HttpStatus.*;
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({ItemEmptyException.class, ItemEmptyCodeException.class, ItemEmptyDescriptionException.class,
-            ItemEmptySuppliersException.class, ItemEmptyPriceReductionsException.class})
+    @ExceptionHandler({ItemEmptyException.class, ItemEmptyIdException.class, ItemEmptyCodeException.class,
+            ItemEmptyDescriptionException.class, ItemEmptySuppliersException.class,
+            ItemEmptyPriceReductionsException.class})
     public ResponseEntity<Object> handleItemBadRequestExceptions() {
         return new ResponseEntity<>("Missing attributes in item", BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ItemInvalidIdException.class)
+    public ResponseEntity<Object> handleItemInvalidIdException() {
+        return new ResponseEntity<>("The id in parameter does not match the ID in item.", BAD_REQUEST);
     }
 
     @ExceptionHandler(ItemInvalidCodeException.class)

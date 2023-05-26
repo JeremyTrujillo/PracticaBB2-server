@@ -20,7 +20,7 @@ public class ItemDeactivator {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private User deactivator;
 

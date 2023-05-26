@@ -75,25 +75,28 @@ public class ItemController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> editItem(@RequestBody ItemDTO item, @RequestParam long itemCode) {
+    public ResponseEntity<Void> editItem(@RequestBody ItemDTO item, @RequestParam long id) {
         checkItemConstraints(item);
+        if (item.getId() == null) {
+            throw new ItemEmptyIdException();
+        }
         checkSupplierConstraints(item.getSuppliers());
         checkPriceReductionsConstraints(item.getPriceReductions());
-        if (!item.getItemCode().equals(itemCode)) {
-            throw new ItemInvalidCodeException();
+        if (!item.getId().equals(id)) {
+            throw new ItemInvalidIdException();
         }
-        if (!"ACTIVE".equals(item.getState())) {
-            throw new ItemInvalidStateException();
-        }
-        ItemDTO itemByCode = itemService.findByItemCode(item.getItemCode());
-        if (itemByCode == null) {
+        ItemDTO itemById = itemService.findById(id);
+        if (itemById == null) {
             throw new ItemNotFoundException();
         }
-        if (!"ACTIVE".equals(itemByCode.getState())) {
+        if (!item.getItemCode().equals(itemById.getItemCode())) {
+            throw new ItemInvalidCodeException();
+        }
+        if (!"ACTIVE".equals(item.getState()) || (!"ACTIVE".equals(itemById.getState()))) {
             throw new ItemInvalidStateException();
         }
-        item.setCreationDate(itemByCode.getCreationDate());
-        item.setCreator(itemByCode.getCreator());
+        item.setCreationDate(itemById.getCreationDate());
+        item.setCreator(itemById.getCreator());
         itemService.saveItem(item);
         return new ResponseEntity<>(HttpStatus.OK);
     }
