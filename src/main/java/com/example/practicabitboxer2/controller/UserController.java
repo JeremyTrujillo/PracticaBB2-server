@@ -25,6 +25,7 @@ import java.util.List;
 @RequestMapping("/users")
 @PreAuthorize("hasAuthority('ADMIN')")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:3000"})
 public class UserController {
 
     private final @NonNull UserService service;

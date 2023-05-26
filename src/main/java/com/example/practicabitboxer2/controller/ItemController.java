@@ -27,6 +27,7 @@ import static java.lang.Math.min;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:3000"})
 public class ItemController {
 
     private final @NonNull ItemService itemService;
