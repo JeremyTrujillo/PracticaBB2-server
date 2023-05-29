@@ -3,6 +3,7 @@ package com.example.practicabitboxer2.controller;
 import com.example.practicabitboxer2.dtos.*;
 import com.example.practicabitboxer2.exceptions.*;
 import com.example.practicabitboxer2.model.ItemState;
+import com.example.practicabitboxer2.security.CustomUserDetails;
 import com.example.practicabitboxer2.services.ItemService;
 import com.example.practicabitboxer2.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,13 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.example.practicabitboxer2.model.ItemState.ACTIVE;
 import static com.example.practicabitboxer2.model.ItemState.DISCONTINUED;
@@ -69,8 +70,14 @@ public class ItemController {
         if (itemByCode != null) {
             throw new ItemCodeAlreadyExistsException();
         }
+        item.setSuppliers(Collections.emptyList());
+        item.setPriceReductions(Collections.emptyList());
         item.setState(ACTIVE.getName());
         item.setCreationDate(new Date());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+        UserDTO creator = userService.findByUsername(principal.getUsername());
+        item.setCreator(creator);
         itemService.saveItem(item);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
