@@ -1,10 +1,10 @@
 package com.example.practicabitboxer2.model;
 
-public enum ItemState {
-    ACTIVE("ACTIVE"),
-    DISCONTINUED("DISCONTINUED");
+public enum Role {
+    USER("USER"),
+    ADMIN("ADMIN");
 
-    ItemState(String name) {
+    Role(String name) {
         this.name = name;
     }
 
@@ -14,15 +14,15 @@ public enum ItemState {
         return name;
     }
 
-    public static ItemState fromText(String text) {
+    public static Role fromText(String text) {
         if (text == null) {
-            return null;
+            return USER;
         }
-        for (ItemState state : values()) {
+        for (Role state : values()) {
             if (state.getName().equals(text.toUpperCase())) {
                 return state;
             }
         }
-        return null;
+        return USER;
     }
 }

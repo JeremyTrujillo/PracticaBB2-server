@@ -1,19 +1,21 @@
 package com.example.practicabitboxer2.dtos;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 
-@Getter
-@Setter
-@Builder
+@Data
 public class PriceReductionDTO {
     private Long id;
     private Float reducedPrice;
     private Date startDate;
     private Date endDate;
-    private List<ItemDTO> items;
+
+    public int compareTo(PriceReductionDTO dto) {
+        int i = this.startDate.compareTo(dto.startDate);
+        if (i != 0) {
+            return i;
+        }
+        return this.endDate.compareTo(dto.endDate);
+    }
 }

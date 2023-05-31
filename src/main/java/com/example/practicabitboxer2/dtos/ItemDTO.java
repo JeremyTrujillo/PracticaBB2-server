@@ -1,16 +1,13 @@
 package com.example.practicabitboxer2.dtos;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
-@Builder
+@Data
 public class ItemDTO {
+    private Long id;
     private Long itemCode;
     private String description;
     private Float price;
