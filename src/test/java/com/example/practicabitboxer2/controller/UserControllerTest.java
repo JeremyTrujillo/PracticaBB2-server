@@ -71,7 +71,7 @@ class UserControllerTest {
         UserDTO user = firstUser().build();
         List<GrantedAuthority> roles = new java.util.ArrayList<>(Collections.emptyList());
         roles.add(new SimpleGrantedAuthority(user.getRole()));
-        CustomUserDetails customUserDetails = new CustomUserDetails(user.getUsername(), user.getPassword(), roles);
+        CustomUserDetails customUserDetails = new CustomUserDetails(user.getId(), user.getUsername(), user.getPassword(), roles);
         Authentication authenticationMock = Mockito.mock(Authentication.class);
         when(authenticationMock.getPrincipal()).thenReturn(customUserDetails);
         when(authenticationManager.authenticate(any())).thenReturn(authenticationMock);

@@ -11,6 +11,7 @@ import java.util.Collection;
 public class JwtDTO {
     private String token;
     private static final String BEARER = "BEARER";
+    private Long id;
     private String username;
     private Collection<? extends GrantedAuthority> roles;
 }

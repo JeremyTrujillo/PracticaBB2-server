@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UserNotFoundException {
         User user = repository.findByUsername(username).orElseThrow(UserNotFoundException::new);
-        return new CustomUserDetails(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
+        return new CustomUserDetails(user.getId(), user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
     }
 
     private Collection<GrantedAuthority> mapRolesToAuthorities(Role role) {

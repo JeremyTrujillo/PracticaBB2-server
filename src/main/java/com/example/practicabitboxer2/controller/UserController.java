@@ -41,7 +41,7 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerator.generateToken(authentication);
         CustomUserDetails details = (CustomUserDetails) authentication.getPrincipal();
-        return new ResponseEntity<>(new JwtDTO(token, details.getUsername(), details.getAuthorities()), HttpStatus.OK);
+        return new ResponseEntity<>(new JwtDTO(token, details.getId(), details.getUsername(), details.getAuthorities()), HttpStatus.OK);
     }
 
     @GetMapping
